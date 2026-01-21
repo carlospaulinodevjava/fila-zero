@@ -3,15 +3,15 @@ version: "3.9"
 services:
   postgres:
     image: postgres:15
-    container_name: container_postgres_healthcore
+    container_name: container_postgres_filazero
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: healthcore
+      POSTGRES_DB: filazero
     ports:
       - "5433:5432"
     volumes:
-      - healthcore_dbdata:/var/lib/postgresql/data
+      - filazero_dbdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -38,11 +38,11 @@ services:
     networks:
       - app-network
 
-  app-healthcore:
+  app-filazero:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app-healthcore
+    container_name: app-filazero
     ports:
       - "8080:8080"
       - "5005:5005"
@@ -61,7 +61,7 @@ services:
       - app-network
 
 volumes:
-  healthcore_dbdata:
+  filazero_dbdata:
 
 networks:
   app-network:
