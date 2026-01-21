@@ -1,0 +1,54 @@
+package com.filazero.appointmentservice.service.job;
+
+import com.filazero.appointmentservice.configuration.RabbitMQConstants;
+import com.filazero.appointmentservice.dto.message.UpcomingAppointementNotificationDTO;
+import com.filazero.appointmentservice.persistence.entity.Appointment;
+import com.filazero.appointmentservice.persistence.repository.AppointmentRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+@Service
+public class UpcomingAppointmentPublisher {
+
+    private final AppointmentRepository appointmentRepository;
+    private final RabbitTemplate rabbitTemplate;
+
+    public UpcomingAppointmentPublisher(AppointmentRepository repo, RabbitTemplate rabbit) {
+        this.appointmentRepository = repo;
+        this.rabbitTemplate = rabbit;
+    }
+
+    @Scheduled(cron = "0 */2 * * * *", zone = "America/Sao_Paulo")
+    @Transactional
+    public void publishTomorrowAppointments() {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+
+        LocalDateTime end = now.plusDays(1);
+
+        var appointments = appointmentRepository.findByAppointmentDateBetweenAndStatusAndSentAtIsNull(now, end, "AGENDADO");
+
+        for (Appointment appointment : appointments) {
+
+            UpcomingAppointementNotificationDTO appointmentDTO = new UpcomingAppointementNotificationDTO(
+                    appointment.getId(),
+                    appointment.getPatient(),
+                    appointment.getDoctor(),
+                    appointment.getNurse(),
+                    appointment.getAppointmentDate(),
+                    appointment.getStatus(),
+                    appointment.getNotes(),
+                    appointment.getCreatedAt(),
+                    appointment.getUpdatedAt()
+            );
+
+            rabbitTemplate.convertAndSend(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.ROUTING_KEY_UPCOMING, appointmentDTO);
+
+            appointment.setSentAt(LocalDateTime.now());
+        }
+    }
+}

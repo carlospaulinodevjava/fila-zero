@@ -8,7 +8,7 @@
         <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.healthcore</groupId>
+    <groupId>com.filazero</groupId>
     <artifactId>appointment-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>appointment-service</name>
