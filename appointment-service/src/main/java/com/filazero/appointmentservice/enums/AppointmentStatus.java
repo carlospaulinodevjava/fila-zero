@@ -1,4 +1,4 @@
-package com.healthcore.appointmentservice.enums;
+package com.filazero.appointmentservice.enums;
 
 public enum AppointmentStatus {
     AGENDADO,
