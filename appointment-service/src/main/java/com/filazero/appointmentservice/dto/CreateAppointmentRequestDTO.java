@@ -11,6 +11,6 @@ public record CreateAppointmentRequestDTO(
         @NotNull Long doctorId,
         Long nurseId,
         @NotNull @Future LocalDateTime appointmentDate,
-        @NotBlank AppointmentStatus status,
+        @NotNull AppointmentStatus status,
         String notes
 ) {}

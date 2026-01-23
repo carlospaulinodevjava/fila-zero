@@ -85,4 +85,23 @@ public class AppointmentController {
         appointmentService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/confirm")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    public ResponseEntity<AppointmentResponseDTO> confirmAppointment(@PathVariable Long id) {
+        logger.info("Handling POST request to /appointments/{}/confirm", id);
+        AppointmentResponseDTO response = appointmentService.confirmAppointment(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/cancel")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    public ResponseEntity<AppointmentResponseDTO> cancelAppointment(
+            @PathVariable Long id,
+            @RequestBody(required = false) com.filazero.appointmentservice.dto.CancelAppointmentRequestDTO request) {
+        logger.info("Handling POST request to /appointments/{}/cancel", id);
+        String reason = request != null ? request.reason() : "Sem motivo informado";
+        AppointmentResponseDTO response = appointmentService.cancelAppointment(id, reason);
+        return ResponseEntity.ok(response);
+    }
 }

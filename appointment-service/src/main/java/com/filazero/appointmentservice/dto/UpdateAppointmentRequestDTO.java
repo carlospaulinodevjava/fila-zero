@@ -19,7 +19,7 @@ public class UpdateAppointmentRequestDTO {
     @Future
     private LocalDateTime appointmentDate;
 
-    @NotBlank
+    @NotNull
     private AppointmentStatus status;
 
     private String notes;
