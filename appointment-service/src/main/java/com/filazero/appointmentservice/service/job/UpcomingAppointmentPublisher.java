@@ -23,9 +23,8 @@ public class UpcomingAppointmentPublisher {
         this.rabbitTemplate = rabbit;
     }
 
-    @Scheduled(cron = "0 */2 * * * *", zone = "America/Sao_Paulo")
-    @Transactional
-    public void publishTomorrowAppointments() {
+
+    /*public void publishTomorrowAppointments() {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
         LocalDateTime end = now.plusDays(1);
@@ -50,5 +49,5 @@ public class UpcomingAppointmentPublisher {
 
             appointment.setSentAt(LocalDateTime.now());
         }
-    }
+    }*/
 }
