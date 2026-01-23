@@ -1,7 +1,6 @@
 package com.filazero.appointmentservice.service;
 
 import com.filazero.appointmentservice.dto.*;
-import com.filazero.appointmentservice.dto.message.AppointmentNotificationDTO;
 import com.filazero.appointmentservice.exception.DataNotFoundException;
 import com.filazero.appointmentservice.persistence.entity.Appointment;
 import com.filazero.appointmentservice.persistence.entity.Doctor;
@@ -11,11 +10,9 @@ import com.filazero.appointmentservice.persistence.repository.AppointmentReposit
 import com.filazero.appointmentservice.persistence.repository.DoctorRepository;
 import com.filazero.appointmentservice.persistence.repository.NurseRepository;
 import com.filazero.appointmentservice.persistence.repository.PatientRepository;
-import com.filazero.appointmentservice.producer.NotificationMessageSender;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,27 +23,21 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final NurseRepository nurseRepository;
-    private final NotificationMessageSender notificationMessageSender;
 
     public AppointmentService(AppointmentRepository appointmentRepository,
                               PatientRepository patientRepository,
                               DoctorRepository doctorRepository,
-                              NurseRepository nurseRepository,
-                              NotificationMessageSender notificationMessageSender) {
+                              NurseRepository nurseRepository) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.nurseRepository = nurseRepository;
-        this.notificationMessageSender = notificationMessageSender;
     }
 
     public AppointmentResponseDTO create(CreateAppointmentRequestDTO createAppointmentRequestDTO) {
         Appointment appointment = buildAppointment(createAppointmentRequestDTO);
         appointment.setStatus(createAppointmentRequestDTO.status());
         appointmentRepository.save(appointment);
-        // Envio para fila de notificação
-        AppointmentNotificationMessageDTO notificationMsg = toNotificationMessageDTO(appointment);
-        notificationMessageSender.sendNotification(notificationMsg);
         return toResponseDTO(appointment);
     }
 
@@ -93,9 +84,7 @@ public class AppointmentService {
         }
         existingAppointment.setUpdatedAt(LocalDateTime.now());
         appointmentRepository.save(existingAppointment);
-        // Envio para fila de notificação
-        AppointmentNotificationMessageDTO notificationMsg = toNotificationMessageDTO(existingAppointment);
-        notificationMessageSender.sendNotification(notificationMsg);
+
         return toResponseDTO(existingAppointment);
     }
 
@@ -132,48 +121,6 @@ public class AppointmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Nenhum enfermeiro encontrado com o ID: " + nurseId));
     }
 
-    private AppointmentNotificationDTO buildAppointmentNotification(Appointment appointment) {
-        return new AppointmentNotificationDTO(
-                appointment.getId(),
-                appointment.getPatient().getId(),
-                appointment.getDoctor().getId(),
-                appointment.getNurse() != null ? appointment.getNurse().getId() : null,
-                appointment.getAppointmentDate(),
-                appointment.getNotes(),
-                appointment.getCreatedAt(),
-                appointment.getUpdatedAt()
-        );
-    }
-
-    private AppointmentNotificationMessageDTO toNotificationMessageDTO(Appointment appointment) {
-        AppointmentNotificationMessageDTO dto = new AppointmentNotificationMessageDTO();
-        dto.setAppointmentId(appointment.getId());
-
-        dto.setPatient(
-                new PatientNotificationMessageDTO(
-                        appointment.getPatient().getName(),
-                        appointment.getPatient().getDocument(),
-                        appointment.getPatient().getPhone(),
-                        appointment.getPatient().getEmail()));
-
-        dto.setDoctor(
-                new DoctorNotificationMessageDTO(
-                        appointment.getDoctor().getName(),
-                        appointment.getDoctor().getSpecialty(),
-                        appointment.getDoctor().getCrm()));
-
-        dto.setNurse(
-                new NurseNotifocationMessageDTO(
-                        appointment.getNurse().getName(),
-                        appointment.getNurse().getCoren()));
-
-        dto.setAppointmentDate(appointment.getAppointmentDate());
-        dto.setStatus(appointment.getStatus());
-        dto.setNotes(appointment.getNotes());
-        dto.setCreatedAt(appointment.getCreatedAt());
-        dto.setUpdatedAt(appointment.getUpdatedAt());
-        return dto;
-    }
 
     private AppointmentResponseDTO toResponseDTO(Appointment appointment) {
         AppointmentResponseDTO dto = new AppointmentResponseDTO();

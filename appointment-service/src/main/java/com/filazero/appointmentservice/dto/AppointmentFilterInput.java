@@ -1,4 +1,4 @@
-package com.filazero.appointmentservice.dto.graphql;
+package com.filazero.appointmentservice.dto;
 
 public record AppointmentFilterInput(
         String patientDocument,

@@ -1,6 +1,7 @@
 package com.filazero.appointmentservice.persistence.entity;
 
 
+import com.filazero.appointmentservice.enums.AppointmentStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @Column(nullable = false)
-    private String status;
+    private AppointmentStatus status;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
@@ -86,11 +87,11 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 
@@ -129,7 +130,9 @@ public class Appointment {
     public MedicalRecord getMedicalRecord() {
         return medicalRecord;
     }
+
     public void setMedicalRecord(MedicalRecord medicalRecord) {
         this.medicalRecord = medicalRecord;
     }
+
 }

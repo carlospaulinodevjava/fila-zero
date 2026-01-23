@@ -1,6 +1,6 @@
 package com.filazero.appointmentservice.service;
 
-import com.filazero.appointmentservice.dto.graphql.AppointmentFilterInput;
+import com.filazero.appointmentservice.dto.AppointmentFilterInput;
 import com.filazero.appointmentservice.exception.ArgumentException;
 import com.filazero.appointmentservice.exception.DataNotFoundException;
 import com.filazero.appointmentservice.persistence.entity.Appointment;

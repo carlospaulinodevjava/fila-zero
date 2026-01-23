@@ -1,5 +1,6 @@
 package com.filazero.appointmentservice.service;
 
+import com.filazero.appointmentservice.enums.AppointmentStatus;
 import com.filazero.appointmentservice.enums.NotificationStatus;
 import com.filazero.appointmentservice.enums.NotificationType;
 import com.filazero.appointmentservice.persistence.entity.Appointment;
@@ -72,8 +73,7 @@ public class NotificationService {
 
         notification.setRespondedAt(LocalDateTime.now());
         notification.setStatus(NotificationStatus.RESPONDIDO);
-        //TODO: transformar status em enum
-        notification.getAppointment().setStatus("Confirmado");
+        notification.getAppointment().setStatus(AppointmentStatus.CONFIRMADO);
         notificationRepository.save(notification);
         return notification;
     }
@@ -95,8 +95,8 @@ public class NotificationService {
 
         notification.setRespondedAt(LocalDateTime.now());
         notification.setStatus(NotificationStatus.RESPONDIDO);
-        //TODO: transformar status em enum
-        notification.getAppointment().setStatus("Cancelado");
+        // TODO Validar se esse cancelamento deve ser feito pelo paciente ou se é outro tipo de cancelamento
+        notification.getAppointment().setStatus(AppointmentStatus.CANCELADO_PELO_PACIENTE);
         notificationRepository.save(notification);
         return notification;
     }

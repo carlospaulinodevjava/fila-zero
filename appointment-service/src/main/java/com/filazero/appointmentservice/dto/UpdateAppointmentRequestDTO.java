@@ -1,5 +1,6 @@
 package com.filazero.appointmentservice.dto;
 
+import com.filazero.appointmentservice.enums.AppointmentStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public class UpdateAppointmentRequestDTO {
     private LocalDateTime appointmentDate;
 
     @NotBlank
-    private String status;
+    private AppointmentStatus status;
 
     private String notes;
 
@@ -36,8 +37,8 @@ public class UpdateAppointmentRequestDTO {
     public LocalDateTime getAppointmentDate() { return appointmentDate; }
     public void setAppointmentDate(LocalDateTime appointmentDate) { this.appointmentDate = appointmentDate; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public AppointmentStatus getStatus() { return status; }
+    public void setStatus(AppointmentStatus status) { this.status = status; }
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
