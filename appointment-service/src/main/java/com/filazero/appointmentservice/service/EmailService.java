@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.time.format.DateTimeFormatter;
+
 
 @Service
 public class EmailService {
@@ -34,7 +36,15 @@ public class EmailService {
 
             Context context = new Context();
             context.setVariable("patientName", notification.getPatient().getName());
-            context.setVariable("appointmentDate", notification.getAppointment().getAppointmentDate().toString());
+
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+            context.setVariable(
+                    "appointmentDate",
+                    notification.getAppointment()
+                            .getAppointmentDate()
+                            .format(formatter)
+            );
             context.setVariable("trackingToken", notification.getTrackingToken());
             context.setVariable("confirmUrl", "http://localhost:8080/webhook/process-confirmation");
             context.setVariable("cancelUrl", "http://localhost:8080/webhook/process-cancellation");
