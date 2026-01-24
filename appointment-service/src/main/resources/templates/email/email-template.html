@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="font-family: Arial, sans-serif">
+
+<h2>Olá, <span th:text="${patientName}">Paciente</span> 👋</h2>
+
+<p>
+    Sua consulta está marcada para
+    <strong th:text="${appointmentDate}">data</strong>.
+</p>
+
+<p>Confirme ou cancele sua consulta:</p>
+
+<form th:action="${confirmUrl}" method="post" style="display:inline">
+    <input type="hidden" name="trackingToken" th:value="${trackingToken}" />
+    <button type="submit"
+            style="padding:10px;background:#4CAF50;color:#fff;border:none;border-radius:4px">
+        Confirmar
+    </button>
+</form>
+
+<form th:action="${cancelUrl}" method="post" style="display:inline;margin-left:10px">
+    <input type="hidden" name="trackingToken" th:value="${trackingToken}" />
+    <button type="submit"
+            style="padding:10px;background:#f44336;color:#fff;border:none;border-radius:4px">
+        Cancelar
+    </button>
+</form>
+
+<p style="font-size:12px;color:#666;margin-top:20px">
+    Este link expira em 48 horas.
+</p>
+
+</body>
+</html>
