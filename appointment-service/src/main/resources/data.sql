@@ -225,3 +225,7 @@ WHERE t.appt_id IS NOT NULL
   AND NOT EXISTS (
     SELECT 1 FROM medical_records mr WHERE mr.appointment_id = t.appt_id
 );
+
+INSERT INTO notification
+(id, tracking_token, appointment_id, patient_id, status, notification_type, send_at, responded_at, expires_at, fl_expired)
+VALUES(2, '550e8400-e29b-41d4-a716-446655440000', 6, 1, 'RESPONDIDO', 'CONFIRMACAO_5_DIAS', '2026-01-22 21:10:37.722', '2026-01-22 21:26:15.191', '2026-01-24 21:10:37.722', false);
