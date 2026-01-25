@@ -51,6 +51,12 @@ public class Appointment {
     @OneToOne(mappedBy = "appointment")
     private MedicalRecord medicalRecord;
 
+    @Column(name = "offered_slot_appointment_id")
+    private Long offeredSlotAppointmentId;
+
+    @Column(name = "offer_expires_at")
+    private LocalDateTime offerExpiresAt;
+
     public Long getId() {
         return id;
     }
@@ -147,4 +153,19 @@ public class Appointment {
         this.confirmationDeadline = confirmationDeadline;
     }
 
+    public Long getOfferedSlotAppointmentId() {
+        return offeredSlotAppointmentId;
+    }
+
+    public void setOfferedSlotAppointmentId(Long offeredSlotAppointmentId) {
+        this.offeredSlotAppointmentId = offeredSlotAppointmentId;
+    }
+
+    public LocalDateTime getOfferExpiresAt() {
+        return offerExpiresAt;
+    }
+
+    public void setOfferExpiresAt(LocalDateTime offerExpiresAt) {
+        this.offerExpiresAt = offerExpiresAt;
+    }
 }
