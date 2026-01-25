@@ -64,6 +64,7 @@ public class NotificationBatchService {
             appointment.setConfirmationDeadline(prazoConfirmacao);
 
             // 4) Cria a notificação
+            //TODO Criar um método para agrupar essa implementacao
             Notification notification = new Notification();
             notification.setAppointment(appointment);
             notification.setPatient(appointment.getPatient());
@@ -73,6 +74,7 @@ public class NotificationBatchService {
             notification.setSentAt(LocalDateTime.now());
             notification.setExpiresAt(LocalDateTime.now().plusHours(horasPrazoConfirmacao));
             notification.setExpired(false);
+            // TODO Chamar a rotina de envio de e-mail
 
             notificationRepository.save(notification);
             totalNotificadas++;
@@ -152,11 +154,13 @@ public class NotificationBatchService {
             LocalDateTime expiraEm = agora.plusHours(prazoHorasParaResponder);
 
             melhorCandidato.setStatus(AppointmentStatus.REMARCACAO_OFERECIDA);
+            // TODO Verificar o que fazer com o id da vaga ofertada caso a vaga ofertada nao seja confirmada
             melhorCandidato.setOfferedSlotAppointmentId(vaga.getId());
             melhorCandidato.setOfferExpiresAt(expiraEm);
             melhorCandidato.setUpdatedAt(agora);
 
             // 4) Criar notification REALOCACAO com token
+            //TODO Criar um método para agrupar essa implementacao
             Notification notificacao = new Notification();
             notificacao.setTrackingToken(UUID.randomUUID().toString());
             notificacao.setAppointment(melhorCandidato);
@@ -166,6 +170,7 @@ public class NotificationBatchService {
             notificacao.setSentAt(agora);
             notificacao.setExpiresAt(expiraEm);
             notificacao.setExpired(false);
+            // TODO Chamar a rotina de envio de e-mail
 
             notificationRepository.save(notificacao);
 

@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class RequestBatchController {
 
     @PostMapping("/execute-notification-process")
-    public ResponseEntity<Boolean> executeNotificationProcess() {
+    public ResponseEntity<Boolean> executeNotificationProcess(String batchType) {
+        // TODO adicionar mecanismo para ter apenas um endpoint e executar a batch de acordo com o tipo
 
         boolean processStarted = true;
 
         return ResponseEntity.status(HttpStatus.OK).body(processStarted);
-
     }
 }
