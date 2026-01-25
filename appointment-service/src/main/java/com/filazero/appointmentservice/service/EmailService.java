@@ -60,4 +60,32 @@ public class EmailService {
         }
     }
 
+    public void sendCancellationConfirmationEmail(Notification notification, String reason) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(notification.getPatient().getEmail());
+            helper.setSubject("Cancelamento confirmado - FilaZero");
+            helper.setFrom("filazerofiap@gmail.com");
+
+            Context context = new Context();
+            context.setVariable("patientName", notification.getPatient().getName());
+            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+            context.setVariable("appointmentDate", 
+                notification.getAppointment().getAppointmentDate().format(formatter));
+            context.setVariable("doctorName", notification.getAppointment().getDoctor().getName());
+            context.setVariable("reason", reason != null ? reason : "Não informado");
+            
+            String html = templateEngine.process("email/cancellation-confirmation", context);
+            helper.setText(html, true);
+
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Erro ao enviar e-mail de confirmação de cancelamento", e);
+        }
+    }
+
 }
