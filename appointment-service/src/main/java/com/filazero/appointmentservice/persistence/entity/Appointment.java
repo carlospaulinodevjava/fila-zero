@@ -45,6 +45,9 @@ public class Appointment {
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
 
+    @Column(name = "confirmation_deadline")
+    private LocalDateTime confirmationDeadline;
+
     @OneToOne(mappedBy = "appointment")
     private MedicalRecord medicalRecord;
 
@@ -134,6 +137,14 @@ public class Appointment {
 
     public void setMedicalRecord(MedicalRecord medicalRecord) {
         this.medicalRecord = medicalRecord;
+    }
+
+    public LocalDateTime getConfirmationDeadline() {
+        return confirmationDeadline;
+    }
+
+    public void setConfirmationDeadline(LocalDateTime confirmationDeadline) {
+        this.confirmationDeadline = confirmationDeadline;
     }
 
 }
