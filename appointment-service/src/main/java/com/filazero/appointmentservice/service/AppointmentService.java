@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,7 @@ public class AppointmentService {
     private final WaitingQueueService waitingQueueService;
     private final PatientScoreService patientScoreService;
     private final NotificationService notificationService;
+    private final com.filazero.appointmentservice.service.validator.AppointmentValidationService validationService;
 
     public AppointmentService(AppointmentRepository appointmentRepository,
                               PatientRepository patientRepository,
@@ -35,7 +37,8 @@ public class AppointmentService {
                               NurseRepository nurseRepository,
                               WaitingQueueService waitingQueueService,
                               PatientScoreService patientScoreService,
-                              NotificationService notificationService) {
+                              NotificationService notificationService,
+                              com.filazero.appointmentservice.service.validator.AppointmentValidationService validationService) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
@@ -43,9 +46,20 @@ public class AppointmentService {
         this.waitingQueueService = waitingQueueService;
         this.patientScoreService = patientScoreService;
         this.notificationService = notificationService;
+        this.validationService = validationService;
     }
 
     public AppointmentResponseDTO create(CreateAppointmentRequestDTO createAppointmentRequestDTO) {
+        List<String> validationErrors = validationService.validateAppointment(
+            createAppointmentRequestDTO.patientId(),
+            createAppointmentRequestDTO.doctorId(),
+            createAppointmentRequestDTO.appointmentDate()
+        );
+
+        if (!validationErrors.isEmpty()) {
+            throw new IllegalArgumentException("Erro de validação: " + String.join("; ", validationErrors));
+        }
+
         Appointment appointment = buildAppointment(createAppointmentRequestDTO);
         appointment.setStatus(createAppointmentRequestDTO.status());
         appointmentRepository.save(appointment);
@@ -182,6 +196,16 @@ public class AppointmentService {
     }
 
     private void reallocateAppointment(Appointment cancelledAppointment) {
+        int attempts = cancelledAppointment.getReallocationAttempts() != null ? 
+            cancelledAppointment.getReallocationAttempts() : 0;
+        
+        if (attempts >= 3) {
+            cancelledAppointment.setStatus(AppointmentStatus.VAGA_ABERTA);
+            cancelledAppointment.setUpdatedAt(LocalDateTime.now());
+            appointmentRepository.save(cancelledAppointment);
+            return;
+        }
+
         Optional<WaitingQueue> nextInQueue = waitingQueueService.findNextInQueue(
             cancelledAppointment.getDoctor().getId()
         );
@@ -194,13 +218,18 @@ public class AppointmentService {
             newAppointment.setDoctor(cancelledAppointment.getDoctor());
             newAppointment.setNurse(cancelledAppointment.getNurse());
             newAppointment.setAppointmentDate(cancelledAppointment.getAppointmentDate());
-            newAppointment.setStatus(AppointmentStatus.PENDENTE_CONFIRMACAO);
+            newAppointment.setStatus(AppointmentStatus.REMARCACAO_OFERECIDA);
             newAppointment.setCreatedAt(LocalDateTime.now());
+            newAppointment.setReallocationAttempts(attempts + 1);
             appointmentRepository.save(newAppointment);
 
             waitingQueueService.markAsScheduled(queueEntry.getId());
 
             notificationService.createRescheduleNotification(newAppointment);
+        } else {
+            cancelledAppointment.setStatus(AppointmentStatus.VAGA_ABERTA);
+            cancelledAppointment.setUpdatedAt(LocalDateTime.now());
+            appointmentRepository.save(cancelledAppointment);
         }
     }
 
