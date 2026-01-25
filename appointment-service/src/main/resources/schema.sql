@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     updated_at TIMESTAMP DEFAULT NOW(),
     sent_at TIMESTAMP DEFAULT NULL,
     confirmation_deadline TIMESTAMP DEFAULT NULL,
+    reallocation_attempts INTEGER DEFAULT 0,
     FOREIGN KEY (patient_id) REFERENCES patients (id),
     FOREIGN KEY (doctor_id) REFERENCES doctors (id),
     FOREIGN KEY (nurse_id) REFERENCES nurses (id)
@@ -116,21 +117,3 @@ CREATE INDEX IF NOT EXISTS idx_waiting_queue_priority_score ON waiting_queues (p
 CREATE INDEX IF NOT EXISTS idx_notification_tracking_token ON notification (tracking_token);
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments (status);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (appointment_date);
-
-CREATE TABLE notification (
-	id bigserial NOT NULL,
-	tracking_token varchar(36) NOT NULL,
-	appointment_id int8 NOT NULL,
-	patient_id int8 NOT NULL,
-	status varchar(30) NOT NULL,
-	notification_type varchar(50) NOT NULL,
-	send_at timestamp NULL,
-	responded_at timestamp NULL,
-	expires_at timestamp NULL,
-	fl_expired bool DEFAULT false NOT NULL,
-	CONSTRAINT notification_pkey PRIMARY KEY (id),
-	CONSTRAINT notification_tracking_token_key UNIQUE (tracking_token),
-	CONSTRAINT fk_notification_appointment FOREIGN KEY (appointment_id) REFERENCES appointments(id),
-	CONSTRAINT fk_notification_patient FOREIGN KEY (patient_id) REFERENCES patients(id)
-);
-CREATE INDEX idx_notification_tracking_token ON public.notification USING btree (tracking_token);
