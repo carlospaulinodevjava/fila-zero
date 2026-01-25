@@ -48,6 +48,9 @@ public class Appointment {
     @Column(name = "confirmation_deadline")
     private LocalDateTime confirmationDeadline;
 
+    @Column(name = "reallocation_attempts")
+    private Integer reallocationAttempts = 0;
+
     @OneToOne(mappedBy = "appointment")
     private MedicalRecord medicalRecord;
 
@@ -145,6 +148,14 @@ public class Appointment {
 
     public void setConfirmationDeadline(LocalDateTime confirmationDeadline) {
         this.confirmationDeadline = confirmationDeadline;
+    }
+
+    public Integer getReallocationAttempts() {
+        return reallocationAttempts;
+    }
+
+    public void setReallocationAttempts(Integer reallocationAttempts) {
+        this.reallocationAttempts = reallocationAttempts;
     }
 
 }
