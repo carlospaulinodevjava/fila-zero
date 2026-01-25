@@ -10,13 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/batches")
 public class RequestBatchController {
 
-
     @PostMapping("/execute-notification-process")
     public ResponseEntity<Boolean> executeNotificationProcess() {
 
-
-
-        boolean processStarted = true; // Suponha que o processo foi iniciado com sucesso
+        boolean processStarted = true;
 
         return ResponseEntity.status(HttpStatus.OK).body(processStarted);
 
