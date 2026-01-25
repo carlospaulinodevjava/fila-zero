@@ -44,21 +44,52 @@ public class NotificationService {
     @Transactional
     public Notification processConfirmation(String trackingToken) {
         Notification notification = validateAndGetNotification(trackingToken);
+        Appointment appointment = notification.getAppointment();
+        
+        if (appointment.getStatus() != AppointmentStatus.PENDENTE_CONFIRMACAO && 
+            appointment.getStatus() != AppointmentStatus.REMARCACAO_OFERECIDA) {
+            throw new IllegalStateException("Esta vaga já foi realocada para outro paciente. " +
+                "Você pode entrar na fila de espera para receber novas ofertas.");
+        }
+        
         notification.setRespondedAt(LocalDateTime.now());
         notification.setStatus(NotificationStatus.RESPONDIDO);
-        notification.getAppointment().setStatus(AppointmentStatus.CONFIRMADO);
+        appointment.setStatus(AppointmentStatus.CONFIRMADO);
+        appointment.setUpdatedAt(LocalDateTime.now());
+        
+        appointmentRepository.save(appointment);
 
         return notificationRepository.save(notification);
     }
 
     @Transactional
     public Notification processCancellation(String trackingToken) {
+        return processCancellation(trackingToken, null);
+    }
+
+    @Transactional
+    public Notification processCancellation(String trackingToken, String reason) {
         Notification notification = validateAndGetNotification(trackingToken);
+        Appointment appointment = notification.getAppointment();
+
+        if (appointment.getStatus() != AppointmentStatus.PENDENTE_CONFIRMACAO && 
+            appointment.getStatus() != AppointmentStatus.REMARCACAO_OFERECIDA) {
+            throw new IllegalStateException("Esta consulta já foi cancelada ou realocada.");
+        }
 
         notification.setRespondedAt(LocalDateTime.now());
         notification.setStatus(NotificationStatus.RESPONDIDO);
-        // TODO validar se esse cancelamento deve ser feito pelo paciente
-        notification.getAppointment().setStatus(AppointmentStatus.CANCELADO_PELO_PACIENTE);
+        appointment.setStatus(AppointmentStatus.CANCELADO_PELO_PACIENTE);
+        appointment.setUpdatedAt(LocalDateTime.now());
+        
+        if (reason != null && !reason.trim().isEmpty()) {
+            String currentNotes = appointment.getNotes() != null ? appointment.getNotes() : "";
+            appointment.setNotes(currentNotes + "\nMotivo do cancelamento: " + reason);
+        }
+        
+        appointmentRepository.save(appointment);
+        
+        emailService.sendCancellationConfirmationEmail(notification, reason);
 
         return notificationRepository.save(notification);
     }
