@@ -536,7 +536,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"nurseId\": 1,\r\n  \"appointmentDate\": \"2026-02-10T14:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"notes\": \"Consulta de rotina\"\r\n}",
+							"raw": "{\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"nurseId\": 1,\r\n  \"appointmentDate\": \"2026-02-10T14:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"NORMAL\",\r\n  \"notes\": \"Consulta de rotina\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -577,7 +577,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"notes\": \"Remarcado\"\r\n}",
+							"raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Remarcado\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -724,7 +724,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"patientId\": 1,\r\n  \"specialtyId\": 3,\r\n  \"notes\": \"Paciente aguardando vaga\"\r\n}",
+							"raw": "{\r\n  \"patientId\": 1,\r\n  \"specialtyId\": 3,\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Paciente aguardando vaga\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

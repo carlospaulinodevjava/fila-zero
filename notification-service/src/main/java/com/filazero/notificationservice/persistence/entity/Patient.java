@@ -1,6 +1,5 @@
 package com.filazero.notificationservice.persistence.entity;
 
-import com.filazero.notificationservice.enums.CriticalityLevel;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -29,10 +28,6 @@ public class Patient {
 
     @Column(columnDefinition = "TEXT")
     private String address;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private CriticalityLevel criticidade;
 
     @Column(name = "engagement_score")
     private Integer engagementScore;
@@ -100,14 +95,6 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public CriticalityLevel getCriticidade() {
-        return criticidade;
-    }
-
-    public void setCriticidade(CriticalityLevel criticidade) {
-        this.criticidade = criticidade;
     }
 
     public Integer getEngagementScore() {

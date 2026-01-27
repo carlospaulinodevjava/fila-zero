@@ -1,8 +1,8 @@
 package com.filazero.appointmentservice.dto;
 
 import com.filazero.appointmentservice.enums.AppointmentStatus;
+import com.filazero.appointmentservice.enums.CriticalityLevel;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -21,6 +21,8 @@ public class UpdateAppointmentRequestDTO {
 
     @NotNull
     private AppointmentStatus status;
+
+    private CriticalityLevel criticidade;
 
     private String notes;
 
@@ -42,4 +44,7 @@ public class UpdateAppointmentRequestDTO {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public CriticalityLevel getCriticidade() { return criticidade; }
+    public void setCriticidade(CriticalityLevel criticidade) { this.criticidade = criticidade; }
 }

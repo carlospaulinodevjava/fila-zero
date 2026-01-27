@@ -104,6 +104,9 @@ public class AppointmentService {
         if (updateRequest.getStatus() != null) {
             existingAppointment.setStatus(updateRequest.getStatus());
         }
+        if (updateRequest.getCriticidade() != null) {
+            existingAppointment.setCriticidade(updateRequest.getCriticidade());
+        }
         if (updateRequest.getNotes() != null) {
             existingAppointment.setNotes(updateRequest.getNotes());
         }
@@ -126,6 +129,7 @@ public class AppointmentService {
         appointment.setNurse(dto.nurseId() != null ? findNurseById(dto.nurseId()) : null);
         appointment.setAppointmentDate(dto.appointmentDate());
         appointment.setStatus(dto.status());
+        appointment.setCriticidade(dto.criticidade());
         appointment.setNotes(dto.notes());
         appointment.setCreatedAt(LocalDateTime.now());
         return appointment;
@@ -154,6 +158,7 @@ public class AppointmentService {
         dto.setPatientId(appointment.getPatient() != null ? appointment.getPatient().getId() : null);
         dto.setAppointmentDate(appointment.getAppointmentDate());
         dto.setStatus(appointment.getStatus());
+        dto.setCriticidade(appointment.getCriticidade());
         dto.setNotes(appointment.getNotes());
         return dto;
     }

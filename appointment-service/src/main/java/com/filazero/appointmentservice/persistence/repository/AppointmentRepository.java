@@ -21,7 +21,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Page<Appointment> findAll(Pageable pageable);
 
     @Query("SELECT a FROM Appointment a WHERE a.status = :status " +
-           "AND a.appointmentDate BETWEEN :startDate AND :endDate " +
+           "AND a.appointmentDate >= :startDate " +
            "AND a.sentAt IS NULL")
     List<Appointment> findAppointmentsNeedingConfirmation(
         @Param("status") AppointmentStatus status,

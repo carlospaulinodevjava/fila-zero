@@ -1,5 +1,6 @@
 package com.filazero.appointmentservice.persistence.entity;
 
+import com.filazero.appointmentservice.enums.CriticalityLevel;
 import com.filazero.appointmentservice.enums.WaitingQueueStatus;
 import jakarta.persistence.*;
 
@@ -34,6 +35,10 @@ public class WaitingQueue {
 
     @Column(name = "priority_score", nullable = false)
     private Integer priorityScore;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private CriticalityLevel criticidade;
 
     @Column(name = "entered_at", nullable = false)
     private LocalDateTime enteredAt;
@@ -125,5 +130,13 @@ public class WaitingQueue {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public CriticalityLevel getCriticidade() {
+        return criticidade;
+    }
+
+    public void setCriticidade(CriticalityLevel criticidade) {
+        this.criticidade = criticidade;
     }
 }

@@ -38,7 +38,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<AppointmentResponseDTO> createAppointment(@Valid @RequestBody CreateAppointmentRequestDTO createAppointmentRequestDTO) {
         logger.info("Handling POST request to /appointments");
         AppointmentResponseDTO response = appointmentService.create(createAppointmentRequestDTO);

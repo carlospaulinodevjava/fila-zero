@@ -1,7 +1,7 @@
 package com.filazero.appointmentservice.persistence.entity;
 
-
 import com.filazero.appointmentservice.enums.AppointmentStatus;
+import com.filazero.appointmentservice.enums.CriticalityLevel;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +32,10 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AppointmentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private CriticalityLevel criticidade;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
@@ -158,4 +162,11 @@ public class Appointment {
         this.reallocationAttempts = reallocationAttempts;
     }
 
+    public CriticalityLevel getCriticidade() {
+        return criticidade;
+    }
+
+    public void setCriticidade(CriticalityLevel criticidade) {
+        this.criticidade = criticidade;
+    }
 }

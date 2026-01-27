@@ -35,7 +35,7 @@ public class WaitingQueueService {
         this.specialtyRepository = specialtyRepository;
     }
 
-    public WaitingQueue addToQueue(Long patientId, Long specialtyId, String notes) {
+    public WaitingQueue addToQueue(Long patientId, Long specialtyId, CriticalityLevel criticidade, String notes) {
         Patient patient = patientRepository.findById(patientId)
             .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado com ID: " + patientId));
         
@@ -45,8 +45,9 @@ public class WaitingQueueService {
         WaitingQueue queue = new WaitingQueue();
         queue.setPatient(patient);
         queue.setSpecialty(specialty);
+        queue.setCriticidade(criticidade != null ? criticidade : CriticalityLevel.NORMAL);
         queue.setEnteredAt(LocalDateTime.now());
-        queue.setPriorityScore(calculatePriorityScore(patient, LocalDateTime.now()));
+        queue.setPriorityScore(calculatePriorityScore(criticidade, LocalDateTime.now()));
         queue.setStatus(WaitingQueueStatus.AGUARDANDO);
         queue.setEstimatedWaitTime(specialty.getAverageWaitTime());
         queue.setNotes(notes);
@@ -54,9 +55,8 @@ public class WaitingQueueService {
         return waitingQueueRepository.save(queue);
     }
 
-    public int calculatePriorityScore(Patient patient, LocalDateTime enteredAt) {
-        CriticalityLevel criticality = patient.getCriticidade() != null ? 
-            patient.getCriticidade() : CriticalityLevel.NORMAL;
+    public int calculatePriorityScore(CriticalityLevel criticidade, LocalDateTime enteredAt) {
+        CriticalityLevel criticality = criticidade != null ? criticidade : CriticalityLevel.NORMAL;
         
         int criticalityScore = criticality.getPeso() * CRITICALITY_WEIGHT_MULTIPLIER;
         

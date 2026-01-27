@@ -29,6 +29,7 @@ public class WaitingQueueController {
         WaitingQueue queue = waitingQueueService.addToQueue(
             request.patientId(),
             request.specialtyId(),
+            request.criticidade(),
             request.notes()
         );
 

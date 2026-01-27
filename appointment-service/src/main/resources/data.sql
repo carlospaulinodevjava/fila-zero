@@ -1,51 +1,52 @@
+-- Inserir usuários de teste
+INSERT INTO users (username, password, role, enabled, created_at)
+VALUES ('admin', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'ADMIN', TRUE, NOW())
+ON CONFLICT (username) DO NOTHING;
+
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('joao.silva', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'DOCTOR', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('maria.souza', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'NURSE', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('ana.lima', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('gustavo.lima', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'DOCTOR', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('renato.ds', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('erick', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO users (username, password, role, enabled, created_at)
-VALUES ('admin', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'ADMIN', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 -- Inserir especialidades
 INSERT INTO specialties (name, description, average_wait_time)
 VALUES ('Cardiologia', 'Especialidade focada em doenças do coração e sistema cardiovascular', 30)
-    ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)
 VALUES ('Dermatologia', 'Especialidade focada em doenças da pele, cabelo e unhas', 20)
-    ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)
 VALUES ('Ginecologia', 'Especialidade focada na saúde da mulher', 25)
-    ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)
 VALUES ('Pediatria', 'Especialidade focada na saúde de crianças e adolescentes', 15)
-    ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)
 VALUES ('Ortopedia', 'Especialidade focada em doenças do sistema musculoesquelético', 35)
-    ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
 -- Inserir médicos
 INSERT INTO doctors (user_id, name, specialty, crm)
@@ -60,178 +61,156 @@ WHERE NOT EXISTS (
     SELECT 1 FROM doctors WHERE crm = 'CRM66666'
 );
 
+-- Inserir enfermeiras
 INSERT INTO nurses (user_id, name, coren)
 SELECT (SELECT id FROM users WHERE username = 'maria.souza'), 'Maria Souza', 'COREN67890'
-    WHERE NOT EXISTS (
+WHERE NOT EXISTS (
     SELECT 1 FROM nurses WHERE coren = 'COREN67890'
 );
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address)
-SELECT (SELECT id FROM users WHERE username = 'ana.lima'), 'Paciente Ana Lima', '1990-01-01', 'DOC123456', '11987654321', 'ana.lima@exemplo.com', 'Rua das Flores, 123'
-    WHERE NOT EXISTS (
+-- Inserir pacientes (SEM criticidade - agora está no appointment)
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'ana.lima'), 'Paciente Ana Lima', '1990-01-01', 'DOC123456', '11987654321', 'ana.lima@exemplo.com', 'Rua das Flores, 123', 100
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC123456'
 );
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address)
-SELECT (SELECT id FROM users WHERE username = 'renato.ds'), 'Paciente Renato DS', '1990-01-01', 'DOC66666', '11987656666', 'ana.lima@exemplo.com', 'Rua das Flores, 123'
-    WHERE NOT EXISTS (
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'renato.ds'), 'Paciente Renato DS', '1990-01-01', 'DOC66666', '11987656666', 'renato.ds@exemplo.com', 'Rua das Flores, 123', 100
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC66666'
 );
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, criticidade, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'erick'), 'Paciente Erick', '1990-01-01', '12345678902', '11987656666', 'erick@exemplo.com', 'Rua das Flores, 123', 'NORMAL', 100
-    WHERE NOT EXISTS (
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'erick'), 'Paciente Erick', '1990-01-01', '12345678902', '11987656666', 'erick@exemplo.com', 'Rua das Flores, 123', 100
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = '12345678902'
 );
 
 -- Adicionar mais pacientes para testes
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('maria.santos', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, criticidade, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'maria.santos'), 'Maria Santos', '1985-05-15', 'DOC789456', '11987654322', 'maria.santos@exemplo.com', 'Av. Paulista, 1000', 'ALTA', 120
-    WHERE NOT EXISTS (
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'maria.santos'), 'Maria Santos', '1985-05-15', 'DOC789456', '11987654322', 'maria.santos@exemplo.com', 'Av. Paulista, 1000', 120
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC789456'
 );
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('pedro.costa', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, criticidade, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'pedro.costa'), 'Pedro Costa', '1992-08-20', 'DOC321654', '11987654323', 'pedro.costa@exemplo.com', 'Rua Augusta, 500', 'URGENTE', 95
-    WHERE NOT EXISTS (
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'pedro.costa'), 'Pedro Costa', '1992-08-20', 'DOC321654', '11987654323', 'pedro.costa@exemplo.com', 'Rua Augusta, 500', 95
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC321654'
 );
 
 INSERT INTO users (username, password, role, enabled, created_at)
 VALUES ('julia.oliveira', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlWtTwu', 'PATIENT', TRUE, NOW())
-    ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, criticidade, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'julia.oliveira'), 'Julia Oliveira', '1988-03-10', 'DOC987321', '11987654324', 'julia.oliveira@exemplo.com', 'Rua Oscar Freire, 200', 'NORMAL', 110
-    WHERE NOT EXISTS (
+INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
+SELECT (SELECT id FROM users WHERE username = 'julia.oliveira'), 'Julia Oliveira', '1988-03-10', 'DOC987321', '11987654324', 'julia.oliveira@exemplo.com', 'Rua Oscar Freire, 200', 110
+WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC987321'
 );
 
-INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, notes, created_at, updated_at)
-SELECT
-    (SELECT id FROM patients WHERE document = 'DOC123456'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM12345'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() + interval '1 day' ),
-    'AGENDADO',
-    'Consulta inicial 1 - com data de atualizacao',
-    now(),
-    now()
-    WHERE NOT EXISTS (
-  SELECT 1 FROM appointments a
-  WHERE a.patient_id = (SELECT id FROM patients WHERE document = 'DOC123456')
-    AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM12345')
-    AND a.appointment_date::date = current_date + 1
-);
-
-INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, notes, created_at, updated_at)
-SELECT
-    (SELECT id FROM patients WHERE document = 'DOC123456'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM12345'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() + interval '2 day'),
-    'AGENDADO',
-    'Consulta inicial 2 - sem data de atualizacao',
-    now(),
-    NULL
-    WHERE NOT EXISTS (
-  SELECT 1 FROM appointments a
-  WHERE a.patient_id = (SELECT id FROM patients WHERE document = 'DOC123456')
-    AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM12345')
-    AND a.appointment_date::date = current_date + 2
-);
-
-INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, notes, created_at, updated_at)
-SELECT
+-- Inserir agendamentos COM criticidade
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+SELECT 
     (SELECT id FROM patients WHERE document = '12345678902'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM12345'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() + interval '2 day'),
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    NOW() + INTERVAL '30 days',
     'AGENDADO',
-    'Consulta inicial 3 - sem data de atualizacao',
-    now(),
-    NULL
-    WHERE NOT EXISTS (
-  SELECT 1 FROM appointments a
-  WHERE a.patient_id = (SELECT id FROM patients WHERE document = '12345678902')
-    AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM12345')
-    AND a.appointment_date::date = current_date + 2
-);
-
-
-INSERT INTO appointments (
-    patient_id, doctor_id, nurse_id, appointment_date,
-    status, notes, created_at, updated_at
-)
-SELECT
-    (SELECT id FROM patients WHERE document = 'DOC66666'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM66666'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() + interval '1 day'),
-    'AGENDADO',
-    'Consulta inicial 4 - sem data de atualizacao',
-    now(),
-    NULL
+    'NORMAL',
+    'Consulta de rotina',
+    NOW()
 WHERE NOT EXISTS (
-    SELECT 1
-    FROM appointments a
-    WHERE a.patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
-      AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM66666')
-      AND a.appointment_date::date = current_date + 1
+    SELECT 1 FROM appointments 
+    WHERE patient_id = (SELECT id FROM patients WHERE document = '12345678902')
+    AND appointment_date = NOW() + INTERVAL '30 days'
 );
 
-INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, notes, created_at, updated_at)
-SELECT
-    (SELECT id FROM patients WHERE document = '12345678902'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM66666'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() - interval '2 day'),
-    'CONCLUIDO',
-    'Consulta finalizada 1',
-    now(),
-    NULL
-    WHERE NOT EXISTS (
-  SELECT 1 FROM appointments a
-  WHERE a.patient_id = (SELECT id FROM patients WHERE document = '12345678902')
-    AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM66666')
-    AND a.status = 'CONCLUIDO'
-);
-
-INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, notes, created_at, updated_at)
-SELECT
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+SELECT 
     (SELECT id FROM patients WHERE document = 'DOC66666'),
-    (SELECT id FROM doctors  WHERE crm      = 'CRM66666'),
-    (SELECT id FROM nurses   WHERE coren    = 'COREN67890'),
-    (now() - interval '2 day'),
-    'CONCLUIDO',
-    'Consulta finalizada 2',
-    now(),
-    NULL
-    WHERE NOT EXISTS (
-  SELECT 1 FROM appointments a
-  WHERE a.patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
-    AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM66666')
-    AND a.status = 'CONCLUIDO'
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    NOW() + INTERVAL '15 days',
+    'AGENDADO',
+    'ALTA',
+    'Acompanhamento urgente',
+    NOW()
+WHERE NOT EXISTS (
+    SELECT 1 FROM appointments 
+    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
+    AND appointment_date = NOW() + INTERVAL '15 days'
 );
 
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+SELECT 
+    (SELECT id FROM patients WHERE document = 'DOC321654'),
+    (SELECT id FROM doctors WHERE crm = 'CRM12345'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    NOW() + INTERVAL '7 days',
+    'AGENDADO',
+    'URGENTE',
+    'Caso urgente - prioridade máxima',
+    NOW()
+WHERE NOT EXISTS (
+    SELECT 1 FROM appointments 
+    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC321654')
+    AND appointment_date = NOW() + INTERVAL '7 days'
+);
+
+-- Inserir agendamentos concluídos para histórico
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+SELECT 
+    (SELECT id FROM patients WHERE document = '12345678902'),
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    NOW() - INTERVAL '10 days',
+    'REALIZADO',
+    'NORMAL',
+    'Consulta realizada com sucesso',
+    NOW() - INTERVAL '10 days'
+WHERE NOT EXISTS (
+    SELECT 1 FROM appointments 
+    WHERE patient_id = (SELECT id FROM patients WHERE document = '12345678902')
+    AND status = 'REALIZADO'
+);
+
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+SELECT 
+    (SELECT id FROM patients WHERE document = 'DOC66666'),
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    NOW() - INTERVAL '20 days',
+    'REALIZADO',
+    'ALTA',
+    'Consulta realizada - evolução positiva',
+    NOW() - INTERVAL '20 days'
+WHERE NOT EXISTS (
+    SELECT 1 FROM appointments 
+    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
+    AND status = 'REALIZADO'
+);
+
+-- Inserir registros médicos para agendamentos concluídos
 WITH target AS (
-    SELECT a.id       AS appt_id,
+    SELECT a.id AS appt_id,
            a.doctor_id,
            a.patient_id
     FROM appointments a
     WHERE a.patient_id = (SELECT id FROM patients WHERE document = '12345678902')
-      AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM66666')
-      AND a.nurse_id   = (SELECT id FROM nurses   WHERE coren    = 'COREN67890')
-      AND a.status = 'CONCLUIDO'
-    )
+      AND a.doctor_id = (SELECT id FROM doctors WHERE crm = 'CRM66666')
+      AND a.nurse_id = (SELECT id FROM nurses WHERE coren = 'COREN67890')
+      AND a.status = 'REALIZADO'
+)
 INSERT INTO medical_records (
     appointment_id, doctor_id, patient_id,
     diagnosis, prescription, observations,
@@ -249,18 +228,16 @@ WHERE t.appt_id IS NOT NULL
     SELECT 1 FROM medical_records mr WHERE mr.appointment_id = t.appt_id
 );
 
-
 WITH target AS (
-    SELECT a.id       AS appt_id,
+    SELECT a.id AS appt_id,
            a.doctor_id,
            a.patient_id
     FROM appointments a
     WHERE a.patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
-      AND a.doctor_id  = (SELECT id FROM doctors  WHERE crm      = 'CRM66666')
-      AND a.nurse_id   = (SELECT id FROM nurses   WHERE coren    = 'COREN67890')
-      AND a.status = 'CONCLUIDO'
-
-    )
+      AND a.doctor_id = (SELECT id FROM doctors WHERE crm = 'CRM66666')
+      AND a.nurse_id = (SELECT id FROM nurses WHERE coren = 'COREN67890')
+      AND a.status = 'REALIZADO'
+)
 INSERT INTO medical_records (
     appointment_id, doctor_id, patient_id,
     diagnosis, prescription, observations,
@@ -278,30 +255,30 @@ WHERE t.appt_id IS NOT NULL
     SELECT 1 FROM medical_records mr WHERE mr.appointment_id = t.appt_id
 );
 
--- Notification records will be created automatically by the application
-
--- Adicionar pacientes na fila de espera
-INSERT INTO waiting_queues (patient_id, specialty_id, preferred_doctor_id, status, priority_score, entered_at, notes)
+-- Adicionar pacientes na fila de espera COM criticidade
+INSERT INTO waiting_queues (patient_id, specialty_id, preferred_doctor_id, status, priority_score, criticidade, entered_at, notes)
 SELECT 
     (SELECT id FROM patients WHERE document = 'DOC789456'),
     (SELECT id FROM specialties WHERE name = 'Cardiologia'),
     (SELECT id FROM doctors WHERE crm = 'CRM12345'),
     'AGUARDANDO',
     3150,
+    'ALTA',
     NOW() - INTERVAL '15 days',
-    'Paciente aguardando vaga em Cardiologia'
+    'Paciente aguardando vaga em Cardiologia - Alta prioridade'
 WHERE NOT EXISTS (
     SELECT 1 FROM waiting_queues 
     WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC789456')
     AND specialty_id = (SELECT id FROM specialties WHERE name = 'Cardiologia')
 );
 
-INSERT INTO waiting_queues (patient_id, specialty_id, status, priority_score, entered_at, notes)
+INSERT INTO waiting_queues (patient_id, specialty_id, status, priority_score, criticidade, entered_at, notes)
 SELECT 
     (SELECT id FROM patients WHERE document = 'DOC321654'),
     (SELECT id FROM specialties WHERE name = 'Cardiologia'),
     'AGUARDANDO',
     4050,
+    'URGENTE',
     NOW() - INTERVAL '5 days',
     'Paciente URGENTE aguardando vaga em Cardiologia'
 WHERE NOT EXISTS (
@@ -310,12 +287,13 @@ WHERE NOT EXISTS (
     AND specialty_id = (SELECT id FROM specialties WHERE name = 'Cardiologia')
 );
 
-INSERT INTO waiting_queues (patient_id, specialty_id, status, priority_score, entered_at, notes)
+INSERT INTO waiting_queues (patient_id, specialty_id, status, priority_score, criticidade, entered_at, notes)
 SELECT 
     (SELECT id FROM patients WHERE document = 'DOC987321'),
     (SELECT id FROM specialties WHERE name = 'Ginecologia'),
     'AGUARDANDO',
     2200,
+    'NORMAL',
     NOW() - INTERVAL '20 days',
     'Paciente aguardando vaga em Ginecologia'
 WHERE NOT EXISTS (

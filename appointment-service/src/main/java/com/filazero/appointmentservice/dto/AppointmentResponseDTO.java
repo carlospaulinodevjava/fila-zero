@@ -1,6 +1,7 @@
 package com.filazero.appointmentservice.dto;
 
 import com.filazero.appointmentservice.enums.AppointmentStatus;
+import com.filazero.appointmentservice.enums.CriticalityLevel;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ public class AppointmentResponseDTO {
     private Long patientId;
     private LocalDateTime appointmentDate;
     private AppointmentStatus status;
+    private CriticalityLevel criticidade;
     private String notes;
 
     // Getters e Setters
@@ -31,4 +33,6 @@ public class AppointmentResponseDTO {
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
 
+    public CriticalityLevel getCriticidade() { return criticidade; }
+    public void setCriticidade(CriticalityLevel criticidade) { this.criticidade = criticidade; }
 }

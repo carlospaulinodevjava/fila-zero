@@ -1,18 +1,6 @@
 package com.filazero.appointmentservice.persistence.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-
-import com.filazero.appointmentservice.enums.CriticalityLevel;
-
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -44,10 +32,6 @@ public class Patient {
 
     @Column(columnDefinition = "TEXT")
     private String address;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private CriticalityLevel criticidade;
 
     @Column(name = "engagement_score")
     private Integer engagementScore;
@@ -123,14 +107,6 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public CriticalityLevel getCriticidade() {
-        return criticidade;
-    }
-
-    public void setCriticidade(CriticalityLevel criticidade) {
-        this.criticidade = criticidade;
     }
 
     public Integer getEngagementScore() {

@@ -32,7 +32,7 @@ public class PatientScoreController {
             patient.getId(),
             patient.getName(),
             score,
-            patient.getCriticidade() != null ? patient.getCriticidade().name() : "NORMAL",
+            "N/A",
             patient.getTotalAppointments() != null ? patient.getTotalAppointments() : 0,
             patient.getMissedAppointments() != null ? patient.getMissedAppointments() : 0,
             patient.getCancelledAppointments() != null ? patient.getCancelledAppointments() : 0
