@@ -5,13 +5,21 @@
 <h2>Olá, <span th:text="${patientName}">Paciente</span></h2>
 
 <p>
-    Informamos que sua consulta marcada para
-    <strong th:text="${appointmentDate}">data</strong>
+    Informamos que sua consulta com
+    <strong th:text="${doctorName}">médico</strong>,
+    marcada para
+    <strong th:text="${appointmentDate}">data</strong>,
     foi <strong>cancelada</strong>.
+</p>
+
+<p>
+    Motivo do cancelamento:
+    <strong th:text="${reason}">Não informado</strong>
 </p>
 
 <p>
     Caso deseje reagendar, entre em contato conosco.
 </p>
+
 </body>
 </html>
