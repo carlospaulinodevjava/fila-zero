@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="font-family: Arial, sans-serif">
+
+<h2>Olá, <span th:text="${patientName}">Paciente</span></h2>
+
+<p>
+    Informamos que sua consulta marcada para
+    <strong th:text="${appointmentDate}">data</strong>
+    foi <strong>cancelada</strong>.
+</p>
+
+<p>
+    Caso deseje reagendar, entre em contato conosco.
+</p>
+</body>
+</html>
