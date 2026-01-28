@@ -49,16 +49,32 @@ VALUES ('Ortopedia', 'Especialidade focada em doenças do sistema musculoesquel�
 ON CONFLICT (name) DO NOTHING;
 
 -- Inserir médicos
-INSERT INTO doctors (user_id, name, specialty, crm)
-SELECT (SELECT id FROM users WHERE username = 'joao.silva'), 'João Silva', 'Cardiologia', 'CRM12345'
+INSERT INTO doctors (user_id, name, crm)
+SELECT (SELECT id FROM users WHERE username = 'joao.silva'), 'João Silva', 'CRM12345'
 WHERE NOT EXISTS (
     SELECT 1 FROM doctors WHERE crm = 'CRM12345'
 );
 
-INSERT INTO doctors (user_id, name, specialty, crm)
-SELECT (SELECT id FROM users WHERE username = 'gustavo.lima'), 'Gustavo Lima', 'Dermatologia', 'CRM66666'
+INSERT INTO doctors (user_id, name, crm)
+SELECT (SELECT id FROM users WHERE username = 'gustavo.lima'), 'Gustavo Lima', 'CRM66666'
 WHERE NOT EXISTS (
     SELECT 1 FROM doctors WHERE crm = 'CRM66666'
+);
+
+INSERT INTO doctor_specialties (doctor_id, specialty_id)
+SELECT (SELECT id FROM doctors WHERE crm = 'CRM12345'), (SELECT id FROM specialties WHERE name = 'Cardiologia')
+WHERE NOT EXISTS (
+    SELECT 1 FROM doctor_specialties ds
+    WHERE ds.doctor_id = (SELECT id FROM doctors WHERE crm = 'CRM12345')
+      AND ds.specialty_id = (SELECT id FROM specialties WHERE name = 'Cardiologia')
+);
+
+INSERT INTO doctor_specialties (doctor_id, specialty_id)
+SELECT (SELECT id FROM doctors WHERE crm = 'CRM66666'), (SELECT id FROM specialties WHERE name = 'Dermatologia')
+WHERE NOT EXISTS (
+    SELECT 1 FROM doctor_specialties ds
+    WHERE ds.doctor_id = (SELECT id FROM doctors WHERE crm = 'CRM66666')
+      AND ds.specialty_id = (SELECT id FROM specialties WHERE name = 'Dermatologia')
 );
 
 -- Inserir enfermeiras

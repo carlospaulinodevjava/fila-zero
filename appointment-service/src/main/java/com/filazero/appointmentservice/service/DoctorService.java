@@ -7,7 +7,9 @@ import com.filazero.appointmentservice.dto.response.DoctorResponseDTO;
 import com.filazero.appointmentservice.exception.DoctorNotFoundException;
 import com.filazero.appointmentservice.mapper.DoctorMapper;
 import com.filazero.appointmentservice.persistence.entity.Doctor;
+import com.filazero.appointmentservice.persistence.entity.Specialty;
 import com.filazero.appointmentservice.persistence.repository.DoctorRepository;
+import com.filazero.appointmentservice.persistence.repository.SpecialtyRepository;
 import com.filazero.appointmentservice.service.helper.DoctorSearchParameterCleaner;
 import com.filazero.appointmentservice.service.helper.DoctorStatusManager;
 import com.filazero.appointmentservice.service.helper.DoctorUpdater;
@@ -19,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DoctorService {
@@ -28,6 +32,7 @@ public class DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final UserService userService;
+    private final SpecialtyRepository specialtyRepository;
     private final DoctorMapper doctorMapper;
     private final DoctorValidator doctorValidator;
     private final DoctorUpdater doctorUpdater;
@@ -37,6 +42,7 @@ public class DoctorService {
     public DoctorService(
             DoctorRepository doctorRepository,
             UserService userService,
+            SpecialtyRepository specialtyRepository,
             DoctorMapper doctorMapper,
             DoctorValidator doctorValidator,
             DoctorSearchParameterCleaner parameterCleaner,
@@ -47,6 +53,7 @@ public class DoctorService {
 
         this.doctorRepository = doctorRepository;
         this.userService = userService;
+        this.specialtyRepository = specialtyRepository;
         this.doctorMapper = doctorMapper;
         this.doctorValidator = doctorValidator;
         this.parameterCleaner = parameterCleaner;
@@ -130,7 +137,34 @@ public class DoctorService {
         Doctor doctor = findDoctorByIdOrThrow(doctorId);
         doctorUpdater.updateDoctorFields(doctor, updateRequest, doctorId);
 
+        if (updateRequest.specialties() != null) {
+            doctor.setSpecialties(resolveSpecialties(updateRequest.specialties()));
+        }
+
         return doctorRepository.save(doctor);
+    }
+
+    private Set<Specialty> resolveSpecialties(List<String> specialtyNames) {
+        Set<Specialty> specialties = new HashSet<>();
+        if (specialtyNames == null) {
+            return specialties;
+        }
+
+        for (String name : specialtyNames) {
+            if (name == null || name.trim().isEmpty()) {
+                continue;
+            }
+            String normalized = name.trim();
+            Specialty specialty = specialtyRepository.findByName(normalized)
+                    .orElseGet(() -> {
+                        Specialty s = new Specialty();
+                        s.setName(normalized);
+                        return specialtyRepository.save(s);
+                    });
+            specialties.add(specialty);
+        }
+
+        return specialties;
     }
 
     public void disableDoctor(Long doctorId) {

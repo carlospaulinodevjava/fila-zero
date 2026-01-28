@@ -8,6 +8,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "doctors")
@@ -24,8 +29,13 @@ public class Doctor {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 100)
-    private String specialty;
+    @ManyToMany
+    @JoinTable(
+            name = "doctor_specialties",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id")
+    )
+    private Set<Specialty> specialties = new HashSet<>();
 
     @Column(nullable = false, unique = true, length = 30)
     private String crm;
@@ -54,12 +64,12 @@ public class Doctor {
         this.name = name;
     }
 
-    public String getSpecialty() {
-        return specialty;
+    public Set<Specialty> getSpecialties() {
+        return specialties;
     }
 
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
+    public void setSpecialties(Set<Specialty> specialties) {
+        this.specialties = specialties;
     }
 
     public String getCrm() {

@@ -2,6 +2,9 @@ package com.filazero.appointmentservice.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "specialties")
 public class Specialty {
@@ -18,6 +21,9 @@ public class Specialty {
 
     @Column(name = "average_wait_time")
     private Integer averageWaitTime;
+
+    @ManyToMany(mappedBy = "specialties")
+    private Set<Doctor> doctors = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -49,5 +55,13 @@ public class Specialty {
 
     public void setAverageWaitTime(Integer averageWaitTime) {
         this.averageWaitTime = averageWaitTime;
+    }
+
+    public Set<Doctor> getDoctors() {
+        return doctors;
+    }
+
+    public void setDoctors(Set<Doctor> doctors) {
+        this.doctors = doctors;
     }
 }

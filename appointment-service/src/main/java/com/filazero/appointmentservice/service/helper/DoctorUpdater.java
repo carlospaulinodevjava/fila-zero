@@ -19,19 +19,12 @@ public class DoctorUpdater {
 
     public void updateDoctorFields(Doctor doctor, DoctorRequestDTO request, Long doctorId) {
         updateNameIfPresent(doctor, request.name());
-        updateSpecialtyIfPresent(doctor, request.specialty());
         updateCRMIfPresent(doctor, request.crm(), doctorId);
     }
 
     private void updateNameIfPresent(Doctor doctor, String name) {
         if (isValidString(name)) {
             doctor.setName(name);
-        }
-    }
-
-    private void updateSpecialtyIfPresent(Doctor doctor, String specialty) {
-        if (specialty != null) {
-            doctor.setSpecialty(specialty);
         }
     }
 

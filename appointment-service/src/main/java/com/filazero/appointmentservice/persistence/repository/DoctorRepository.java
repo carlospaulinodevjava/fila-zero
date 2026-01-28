@@ -21,8 +21,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     @Query(value = "SELECT d.* FROM doctors d " +
         "JOIN users u ON u.id = d.user_id " +
         "WHERE (:name IS NULL OR UPPER(d.name) LIKE UPPER(CONCAT('%', :name, '%'))) " +
-        "AND (:specialty IS NULL OR UPPER(d.specialty) LIKE UPPER(CONCAT('%', :specialty, '%'))) " +
         "AND (:crm IS NULL OR UPPER(d.crm) LIKE UPPER(CONCAT('%', :crm, '%'))) " +
+        "AND (:specialty IS NULL OR EXISTS (" +
+        "    SELECT 1 FROM doctor_specialties ds " +
+        "    JOIN specialties s ON s.id = ds.specialty_id " +
+        "    WHERE ds.doctor_id = d.id " +
+        "      AND UPPER(s.name) LIKE UPPER(CONCAT('%', :specialty, '%'))" +
+        ")) " +
         "AND u.enabled = true",
         nativeQuery = true)
     List<Doctor> findActiveDoctorsByFilters(@Param("name") String name,
