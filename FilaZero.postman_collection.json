@@ -1,825 +1,1351 @@
 {
-	"info": {
-		"_postman_id": "a5ac7714-552c-414b-8533-591afb688a88",
-		"name": "FilaZero",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20727142",
-		"_collection_link": "https://red-station-987730.postman.co/workspace/Fiap~c6cdd2d4-4081-491f-8fc9-9cf0892b8f2a/collection/20727142-a5ac7714-552c-414b-8533-591afb688a88?action=share&source=collection_link&creator=20727142"
-	},
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{accessToken}}",
-				"type": "string"
-			}
-		]
-	},
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "accessToken",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "refreshToken",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "trackingToken",
-			"value": "",
-			"type": "string"
-		}
-	],
-	"item": [
-		{
-			"name": "Autenticação",
-			"item": [
-				{
-					"name": "POST /auth/login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"// Backend retorna AuthResponseDTO { acessToken, refreshToken }",
-									"var body = pm.response.json();",
-									"if (body && body.acessToken) {",
-									"    pm.collectionVariables.set('accessToken', body.acessToken);",
-									"    if (body.refreshToken) { pm.collectionVariables.set('refreshToken', body.refreshToken); }",
-									"    pm.test('tokens salvos na collection', function () {",
-									"        pm.expect(pm.collectionVariables.get('accessToken')).to.be.a('string').and.not.empty;",
-									"    });",
-									"} else {",
-									"    pm.test('Resposta de login sem acessToken', function () {",
-									"        pm.expect.fail('Campo acessToken não encontrado na resposta');",
-									"    });",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"login\": \"admin\",\r\n  \"password\": \"senha123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/auth/login"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /auth/refresh-token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"var body = pm.response.json();",
-									"if (body && body.acessToken) {",
-									"    pm.collectionVariables.set('accessToken', body.acessToken);",
-									"    if (body.refreshToken) { pm.collectionVariables.set('refreshToken', body.refreshToken); }",
-									"    pm.test('tokens atualizados', function () {",
-									"        pm.expect(pm.collectionVariables.get('accessToken')).to.be.a('string').and.not.empty;",
-									"    });",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/auth/refresh-token"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Especialidades",
-			"item": [
-				{
-					"name": "GET /specialties",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/specialties"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /specialties/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/specialties/1"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /specialties/search?name=Cardiologia",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/specialties/search?name=Cardiologia"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /specialties",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Neurologia\",\r\n  \"description\": \"Especialidade focada em sistema nervoso\",\r\n  \"averageWaitTime\": 60\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/specialties"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /specialties/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Cardiologia\",\r\n  \"description\": \"Atualizada\",\r\n  \"averageWaitTime\": 50\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/specialties/1"
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE /specialties/{id}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{baseUrl}}/specialties/1"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Médicos",
-			"item": [
-				{
-					"name": "POST /doctors",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"dr.silva\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Dr. João Silva\",\r\n  \"specialties\": [\"Cardiologia\", \"Clinico Geral\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/doctors"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /doctors",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/doctors"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /doctors/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/doctors/1"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /doctors/search",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/doctors/search?name=João"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /doctors/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Dr. João Silva Santos\",\r\n  \"specialties\": [\"Cardiologia\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/doctors/1"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /doctors/{id}/disable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/doctors/1/disable"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /doctors/{id}/enable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/doctors/1/enable"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Pacientes",
-			"item": [
-				{
-					"name": "POST /patients",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"novo.paciente\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Novo Paciente\",\r\n  \"dateOfBirth\": \"1990-01-01\",\r\n  \"document\": \"DOC999888\",\r\n  \"phone\": \"11999999999\",\r\n  \"email\": \"novo.paciente@exemplo.com\",\r\n  \"address\": \"Rua Teste, 123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/patients"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /patients",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/patients"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /patients/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/patients/1"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /patients/search",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/patients/search?name=Maria"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /patients/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Ana Lima\",\r\n  \"dateOfBirth\": \"1996-02-09\",\r\n  \"document\": \"DOC123456\",\r\n  \"phone\": \"(11) 88888-7777\",\r\n  \"email\": \"ana.lima@email.com\",\r\n  \"address\": \"Rua X, 123\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/patients/1"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /patients/{id}/disable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/patients/1/disable"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /patients/{id}/enable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/patients/1/enable"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /patients/{id}/score",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/patients/1/score"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Enfermeiros",
-			"item": [
-				{
-					"name": "GET /nurses",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/nurses"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /nurses/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/nurses/1"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /nurses/search",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/nurses/search?name=Ana"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /nurses",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"ana.ferreira\",\r\n  \"password\": \"senhaSegura123\",\r\n  \"name\": \"Ana Paula Ferreira\",\r\n  \"coren\": \"COREN-MG-345678\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/nurses"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /nurses/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Maria Souza\",\r\n  \"coren\": \"COREN-SP-12345\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/nurses/1"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /nurses/{id}/disable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/nurses/1/disable"
-					},
-					"response": []
-				},
-				{
-					"name": "PATCH /nurses/{id}/enable",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": "{{baseUrl}}/nurses/1/enable"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Agendamentos",
-			"item": [
-				{
-					"name": "POST /appointments",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"nurseId\": 1,\r\n  \"appointmentDate\": \"2026-02-10T14:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"NORMAL\",\r\n  \"notes\": \"Consulta de rotina\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/appointments"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /appointments",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/appointments"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /appointments/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/appointments/1"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /appointments/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Remarcado\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/appointments/1"
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE /appointments/{id}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{baseUrl}}/appointments/1"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /appointments/{id}/confirm",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": "{{baseUrl}}/appointments/1/confirm"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /appointments/{id}/cancel",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"reason\": \"Sem motivo informado\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/appointments/1/cancel"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Prontuários (Medical Records)",
-			"item": [
-				{
-					"name": "POST /medicalrecords",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"appointmentId\": 1,\r\n  \"diagnosis\": \"Diagnóstico exemplo\",\r\n  \"treatment\": \"Tratamento exemplo\",\r\n  \"notes\": \"Observações\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/medicalrecords"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /medicalrecords",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/medicalrecords"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /medicalrecords/{id}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/medicalrecords/1"
-					},
-					"response": []
-				},
-				{
-					"name": "PUT /medicalrecords/{id}",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"diagnosis\": \"Diagnóstico atualizado\",\r\n  \"treatment\": \"Tratamento atualizado\",\r\n  \"notes\": \"Notas atualizadas\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/medicalrecords/1"
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE /medicalrecords/{id}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{baseUrl}}/medicalrecords/1"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Fila de Espera",
-			"item": [
-				{
-					"name": "POST /waiting-queues",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"patientId\": 1,\r\n  \"specialtyId\": 3,\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Paciente aguardando vaga\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/waiting-queues"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /waiting-queues/patient/{patientId}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/waiting-queues/patient/1"
-					},
-					"response": []
-				},
-				{
-					"name": "GET /waiting-queues/specialty/{specialtyId}",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/waiting-queues/specialty/1"
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE /waiting-queues/{id}",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": "{{baseUrl}}/waiting-queues/1"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Notificações",
-			"item": [
-				{
-					"name": "POST /notifications?id={appointmentId}",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": "{{baseUrl}}/notifications?id=1"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Webhook (Confirmação/Cancelamento)",
-			"item": [
-				{
-					"name": "POST /webhook/process-confirmation",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "trackingToken",
-									"value": "{{trackingToken}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": "{{baseUrl}}/webhook/process-confirmation"
-					},
-					"response": []
-				},
-				{
-					"name": "POST /webhook/process-cancellation",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "trackingToken",
-									"value": "{{trackingToken}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": "{{baseUrl}}/webhook/process-cancellation"
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "1129cc23-5f48-4bc6-a3ad-d9644af29412",
+    "name": "FilaZero",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "9099310"
+  },
+  "item": [
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "POST /auth/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Backend retorna AuthResponseDTO { acessToken, refreshToken }",
+                  "var body = pm.response.json();",
+                  "if (body && body.acessToken) {",
+                  "    pm.collectionVariables.set('accessToken', body.acessToken);",
+                  "    if (body.refreshToken) { pm.collectionVariables.set('refreshToken', body.refreshToken); }",
+                  "    pm.test('tokens salvos na collection', function () {",
+                  "        pm.expect(pm.collectionVariables.get('accessToken')).to.be.a('string').and.not.empty;",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Resposta de login sem acessToken', function () {",
+                  "        pm.expect.fail('Campo acessToken não encontrado na resposta');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"login\": \"admin\",\r\n  \"password\": \"senha123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/refresh-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var body = pm.response.json();",
+                  "if (body && body.acessToken) {",
+                  "    pm.collectionVariables.set('accessToken', body.acessToken);",
+                  "    if (body.refreshToken) { pm.collectionVariables.set('refreshToken', body.refreshToken); }",
+                  "    pm.test('tokens atualizados', function () {",
+                  "        pm.expect(pm.collectionVariables.get('accessToken')).to.be.a('string').and.not.empty;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Especialidades",
+      "item": [
+        {
+          "name": "GET /specialties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/specialties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /specialties/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/specialties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /specialties/search?name=Cardiologia",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/specialties/search?name=Cardiologia",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Cardiologia"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /specialties",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Neurologia\",\r\n  \"description\": \"Especialidade focada em sistema nervoso\",\r\n  \"averageWaitTime\": 60\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/specialties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /specialties/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Cardiologia\",\r\n  \"description\": \"Atualizada\",\r\n  \"averageWaitTime\": 50\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/specialties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /specialties/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/specialties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "specialties",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Médicos",
+      "item": [
+        {
+          "name": "POST /doctors",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"dr.silva\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Dr. João Silva\",\r\n  \"specialties\": [\"Cardiologia\", \"Clinico Geral\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /doctors/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /doctors/search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/doctors/search?name=João",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "João"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /doctors/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Dr. João Silva Santos\",\r\n  \"specialties\": [\"Cardiologia\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /doctors/{id}/disable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1/disable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors",
+                "1",
+                "disable"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /doctors/{id}/enable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1/enable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doctors",
+                "1",
+                "enable"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "POST /patients",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"novo.paciente\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Novo Paciente\",\r\n  \"dateOfBirth\": \"1990-01-01\",\r\n  \"document\": \"DOC999888\",\r\n  \"phone\": \"11999999999\",\r\n  \"email\": \"novo.paciente@exemplo.com\",\r\n  \"address\": \"Rua Teste, 123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /patients/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /patients/search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/search?name=Maria",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Maria"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /patients/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Ana Lima\",\r\n  \"dateOfBirth\": \"1996-02-09\",\r\n  \"document\": \"DOC123456\",\r\n  \"phone\": \"(11) 88888-7777\",\r\n  \"email\": \"ana.lima@email.com\",\r\n  \"address\": \"Rua X, 123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /patients/{id}/disable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/disable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "disable"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /patients/{id}/enable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/enable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "enable"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /patients/{id}/score",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "score"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Enfermeiros",
+      "item": [
+        {
+          "name": "GET /nurses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nurses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /nurses/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nurses/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /nurses/search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nurses/search?name=Ana",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Ana"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /nurses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"ana.ferreira\",\r\n  \"password\": \"senhaSegura123\",\r\n  \"name\": \"Ana Paula Ferreira\",\r\n  \"coren\": \"COREN-MG-345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/nurses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /nurses/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Maria Souza\",\r\n  \"coren\": \"COREN-SP-12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/nurses/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /nurses/{id}/disable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nurses/1/disable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses",
+                "1",
+                "disable"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /nurses/{id}/enable",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nurses/1/enable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nurses",
+                "1",
+                "enable"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "POST /appointments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"nurseId\": 1,\r\n  \"appointmentDate\": \"2026-02-10T14:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"NORMAL\",\r\n  \"notes\": \"Consulta de rotina\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /appointments/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /appointments/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Remarcado\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /appointments/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /appointments/{id}/confirm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/1/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "1",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /appointments/{id}/cancel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"reason\": \"Sem motivo informado\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments/1/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "1",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Prontuários (Medical Records)",
+      "item": [
+        {
+          "name": "POST /medicalrecords",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"appointmentId\": 1,\r\n  \"diagnosis\": \"Diagnóstico exemplo\",\r\n  \"treatment\": \"Tratamento exemplo\",\r\n  \"notes\": \"Observações\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medicalrecords",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicalrecords"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /medicalrecords",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicalrecords",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicalrecords"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /medicalrecords/{id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicalrecords/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicalrecords",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /medicalrecords/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"diagnosis\": \"Diagnóstico atualizado\",\r\n  \"treatment\": \"Tratamento atualizado\",\r\n  \"notes\": \"Notas atualizadas\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medicalrecords/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicalrecords",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /medicalrecords/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medicalrecords/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "medicalrecords",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fila de Espera",
+      "item": [
+        {
+          "name": "POST /waiting-queues",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"patientId\": 1,\r\n  \"specialtyId\": 3,\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Paciente aguardando vaga\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/waiting-queues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "waiting-queues"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /waiting-queues/patient/{patientId}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/waiting-queues/patient/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "waiting-queues",
+                "patient",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /waiting-queues/specialty/{specialtyId}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/waiting-queues/specialty/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "waiting-queues",
+                "specialty",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /waiting-queues/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/waiting-queues/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "waiting-queues",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notificações",
+      "item": [
+        {
+          "name": "POST /notifications?id={appointmentId}",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?id=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhook (Confirmação/Cancelamento)",
+      "item": [
+        {
+          "name": "POST /webhook/process-confirmation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "trackingToken",
+                  "value": "{{trackingToken}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhook/process-confirmation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhook",
+                "process-confirmation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /webhook/process-cancellation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "trackingToken",
+                  "value": "{{trackingToken}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhook/process-cancellation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "webhook",
+                "process-cancellation"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rotinas batch",
+      "item": [
+        {
+          "name": "1-enviar-notificacoes",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/batches/execute-notification-process",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "batches",
+                "execute-notification-process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-expirar-notificacoes",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/batches/execute-expiration-process",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "batches",
+                "execute-expiration-process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3-enviar-notificacoes-realocacao",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/batches/execute-reallocate-process",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "batches",
+                "execute-reallocate-process"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "trackingToken",
+      "value": "",
+      "type": "string"
+    }
+  ]
 }
