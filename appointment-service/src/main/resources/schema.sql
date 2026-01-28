@@ -107,3 +107,7 @@ CREATE TABLE IF NOT EXISTS notification (
 CREATE INDEX IF NOT EXISTS idx_notification_tracking_token ON notification (tracking_token);
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments (status);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (appointment_date);
+
+-- Garante que exista um índice único para (patient_id, doctor_id, appointment_date)
+-- Isso permite usar ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING no data.sql
+CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_patient_doctor_date ON appointments (patient_id, doctor_id, appointment_date);

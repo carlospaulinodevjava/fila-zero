@@ -134,87 +134,77 @@ WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC987321'
 );
 
--- Inserir agendamentos COM criticidade
+-- Inserir agendamentos COM criticidade (protegidos contra duplicação com ON CONFLICT)
+WITH appt AS (SELECT NOW() + INTERVAL '30 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
-SELECT 
+VALUES (
     (SELECT id FROM patients WHERE document = '12345678902'),
     (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
-    NOW() + INTERVAL '30 days',
+    (SELECT dt FROM appt),
     'AGENDADO',
     'NORMAL',
     'Consulta de rotina',
     NOW()
-WHERE NOT EXISTS (
-    SELECT 1 FROM appointments 
-    WHERE patient_id = (SELECT id FROM patients WHERE document = '12345678902')
-    AND appointment_date = NOW() + INTERVAL '30 days'
-);
+)
+ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
 
+WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
-SELECT 
+VALUES (
     (SELECT id FROM patients WHERE document = 'DOC66666'),
     (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
-    NOW() + INTERVAL '15 days',
+    (SELECT dt FROM appt),
     'AGENDADO',
     'ALTA',
     'Acompanhamento urgente',
     NOW()
-WHERE NOT EXISTS (
-    SELECT 1 FROM appointments 
-    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
-    AND appointment_date = NOW() + INTERVAL '15 days'
-);
+)
+ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
 
+WITH appt AS (SELECT NOW() + INTERVAL '7 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
-SELECT 
+VALUES (
     (SELECT id FROM patients WHERE document = 'DOC321654'),
     (SELECT id FROM doctors WHERE crm = 'CRM12345'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
-    NOW() + INTERVAL '7 days',
+    (SELECT dt FROM appt),
     'AGENDADO',
     'URGENTE',
     'Caso urgente - prioridade máxima',
     NOW()
-WHERE NOT EXISTS (
-    SELECT 1 FROM appointments 
-    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC321654')
-    AND appointment_date = NOW() + INTERVAL '7 days'
-);
+)
+ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
 
--- Inserir agendamentos concluídos para histórico
+-- Inserir agendamentos concluídos para histórico (protegidos contra duplicação com ON CONFLICT)
+WITH appt AS (SELECT NOW() - INTERVAL '10 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
-SELECT 
+VALUES (
     (SELECT id FROM patients WHERE document = '12345678902'),
     (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
-    NOW() - INTERVAL '10 days',
+    (SELECT dt FROM appt),
     'REALIZADO',
     'NORMAL',
     'Consulta realizada com sucesso',
-    NOW() - INTERVAL '10 days'
-WHERE NOT EXISTS (
-    SELECT 1 FROM appointments 
-    WHERE patient_id = (SELECT id FROM patients WHERE document = '12345678902')
-    AND status = 'REALIZADO'
-);
+    (SELECT dt FROM appt)
+)
+ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
 
+WITH appt AS (SELECT NOW() - INTERVAL '20 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
-SELECT 
+VALUES (
     (SELECT id FROM patients WHERE document = 'DOC66666'),
     (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
-    NOW() - INTERVAL '20 days',
+    (SELECT dt FROM appt),
     'REALIZADO',
     'ALTA',
     'Consulta realizada - evolução positiva',
-    NOW() - INTERVAL '20 days'
-WHERE NOT EXISTS (
-    SELECT 1 FROM appointments 
-    WHERE patient_id = (SELECT id FROM patients WHERE document = 'DOC66666')
-    AND status = 'REALIZADO'
-);
+    (SELECT dt FROM appt)
+)
+ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
 
 -- Inserir registros médicos para agendamentos concluídos
 WITH target AS (
