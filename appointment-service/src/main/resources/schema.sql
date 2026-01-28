@@ -18,9 +18,16 @@ CREATE TABLE IF NOT EXISTS doctors (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
-    specialty VARCHAR(100),
     crm VARCHAR(30) UNIQUE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS doctor_specialties (
+    doctor_id BIGINT NOT NULL,
+    specialty_id BIGINT NOT NULL,
+    PRIMARY KEY (doctor_id, specialty_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors (id) ON DELETE CASCADE,
+    FOREIGN KEY (specialty_id) REFERENCES specialties (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS nurses (

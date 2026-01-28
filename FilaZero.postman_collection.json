@@ -239,7 +239,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"dr.silva\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Dr. João Silva\",\r\n  \"specialty\": \"Cardiologia\",\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
+							"raw": "{\r\n  \"username\": \"dr.silva\",\r\n  \"password\": \"senha123\",\r\n  \"name\": \"Dr. João Silva\",\r\n  \"specialties\": [\"Cardiologia\", \"Clinico Geral\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -289,7 +289,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Dr. João Silva Santos\",\r\n  \"specialty\": \"Cardiologia\",\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
+							"raw": "{\r\n  \"name\": \"Dr. João Silva Santos\",\r\n  \"specialties\": [\"Cardiologia\"],\r\n  \"crm\": \"CRM/SP 123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

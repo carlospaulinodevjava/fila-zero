@@ -120,7 +120,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public boolean isPatientOwner(String username, Long medicalRecordId) {
-        // Busca o MedicalRecord pelo id
         return medicalRecordRepository.findById(medicalRecordId)
                 .map(record -> {
                     if (record.getPatient() == null) return false;

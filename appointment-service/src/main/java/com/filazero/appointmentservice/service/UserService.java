@@ -8,11 +8,14 @@ import com.filazero.appointmentservice.exception.DocumentAlreadyExistsException;
 import com.filazero.appointmentservice.persistence.entity.Doctor;
 import com.filazero.appointmentservice.persistence.entity.Nurse;
 import com.filazero.appointmentservice.persistence.entity.Patient;
+import com.filazero.appointmentservice.persistence.entity.Specialty;
 import com.filazero.appointmentservice.persistence.entity.User;
 import com.filazero.appointmentservice.persistence.repository.DoctorRepository;
 import com.filazero.appointmentservice.persistence.repository.NurseRepository;
 import com.filazero.appointmentservice.persistence.repository.PatientRepository;
+import com.filazero.appointmentservice.persistence.repository.SpecialtyRepository;
 import com.filazero.appointmentservice.persistence.repository.UserRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -34,17 +39,20 @@ public class UserService implements UserDetailsService {
     private final DoctorRepository doctorRepository;
     private final NurseRepository nurseRepository;
     private final PatientRepository patientRepository;
+    private final SpecialtyRepository specialtyRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        DoctorRepository doctorRepository,
                        NurseRepository nurseRepository,
                        PatientRepository patientRepository,
+                       SpecialtyRepository specialtyRepository,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.nurseRepository = nurseRepository;
         this.patientRepository = patientRepository;
+        this.specialtyRepository = specialtyRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -66,10 +74,33 @@ public class UserService implements UserDetailsService {
         Doctor doctor = new Doctor();
         doctor.setUser(savedUser);
         doctor.setName(dto.name());
-        doctor.setSpecialty(dto.specialty());
+        doctor.setSpecialties(resolveSpecialties(dto.specialties()));
         doctor.setCrm(dto.crm());
 
         return doctorRepository.save(doctor);
+    }
+
+    private Set<Specialty> resolveSpecialties(java.util.List<String> specialtyNames) {
+        Set<Specialty> specialties = new HashSet<>();
+        if (specialtyNames == null) {
+            return specialties;
+        }
+
+        for (String name : specialtyNames) {
+            if (name == null || name.trim().isEmpty()) {
+                continue;
+            }
+            String normalized = name.trim();
+            Specialty specialty = specialtyRepository.findByName(normalized)
+                    .orElseGet(() -> {
+                        Specialty s = new Specialty();
+                        s.setName(normalized);
+                        return specialtyRepository.save(s);
+                    });
+            specialties.add(specialty);
+        }
+
+        return specialties;
     }
 
     public Nurse saveNurse(NurseRegistrationDTO dto) {

@@ -1,9 +1,12 @@
 package com.filazero.appointmentservice.dto;
+
+import java.util.List;
+
 public record DoctorRequestDTO(
         Long id,
         Long userId,
         String name,
-        String specialty,
+        List<String> specialties,
         String crm
 ) {
 }

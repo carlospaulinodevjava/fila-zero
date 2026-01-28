@@ -20,7 +20,7 @@ public class PatientScoreController {
     }
 
     @GetMapping("/{id}/score")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<PatientScoreResponseDTO> getPatientScore(@PathVariable Long id) {
         Patient patient = patientRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado com ID: " + id));

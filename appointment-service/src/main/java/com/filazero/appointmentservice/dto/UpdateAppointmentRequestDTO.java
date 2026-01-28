@@ -26,7 +26,6 @@ public class UpdateAppointmentRequestDTO {
 
     private String notes;
 
-    // Getters e Setters
     public Long getDoctorId() { return doctorId; }
     public void setDoctorId(Long doctorId) { this.doctorId = doctorId; }
 

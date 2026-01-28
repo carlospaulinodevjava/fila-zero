@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/webhook")
 public class WebhookController {
 
+    private static final String ADMIN_ROLE = "hasRole('ADMIN')";
+    private static final String DOCTOR_ROLE = "hasRole('DOCTOR')";
+    private static final String NURSE_ROLE = "hasRole('NURSE')";
+
     private final NotificationService notificationService;
 
     public WebhookController(NotificationService notificationService) {
@@ -16,37 +20,19 @@ public class WebhookController {
     }
 
     @PostMapping("/process-confirmation")
+    @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<?> processConfirmation(
             @ModelAttribute NotificationResponseRequestDTO request) {
 
         notificationService.processConfirmation(request.trackingToken());
-
-        //TODO: pensar o q mandar no futuro
-        /*return ResponseEntity.ok(
-                new WebhookResponseDTO(
-                        "PROCESSED",
-                        notification.getAppointment().getId(),
-                        "Resposta processada com sucesso"
-                )
-        );*/
-
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/process-cancellation")
+    @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<?> processCancellation(@ModelAttribute NotificationResponseRequestDTO request) {
 
         notificationService.processCancellation(request.trackingToken());
-
-        //TODO: pensar o q mandar no futuro
-        /*return ResponseEntity.ok(
-                new WebhookResponseDTO(
-                        "PROCESSED",
-                        notification.getAppointment().getId(),
-                        "Resposta processada com sucesso"
-                )
-        );*/
-
         return ResponseEntity.ok().build();
     }
 }

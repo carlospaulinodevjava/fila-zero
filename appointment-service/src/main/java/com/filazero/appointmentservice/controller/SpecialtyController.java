@@ -24,7 +24,7 @@ public class SpecialtyController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN')")
     public ResponseEntity<SpecialtyResponseDTO> create(@Valid @RequestBody SpecialtyRequestDTO request) {
         Specialty specialty = new Specialty();
         specialty.setName(request.name());
@@ -36,7 +36,7 @@ public class SpecialtyController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<List<SpecialtyResponseDTO>> getAll() {
         List<SpecialtyResponseDTO> specialties = specialtyService.getAll().stream()
             .map(this::toResponseDTO)
@@ -45,7 +45,7 @@ public class SpecialtyController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<SpecialtyResponseDTO> getById(@PathVariable Long id) {
         return specialtyService.getById(id)
             .map(specialty -> ResponseEntity.ok(toResponseDTO(specialty)))
@@ -53,7 +53,7 @@ public class SpecialtyController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<SpecialtyResponseDTO> getByName(@RequestParam String name) {
         return specialtyService.getByName(name)
             .map(specialty -> ResponseEntity.ok(toResponseDTO(specialty)))
@@ -61,7 +61,7 @@ public class SpecialtyController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN')")
     public ResponseEntity<SpecialtyResponseDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody SpecialtyRequestDTO request) {
@@ -75,7 +75,7 @@ public class SpecialtyController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         specialtyService.delete(id);
         return ResponseEntity.noContent().build();

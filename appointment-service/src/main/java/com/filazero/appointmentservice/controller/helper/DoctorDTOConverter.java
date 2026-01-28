@@ -17,7 +17,7 @@ public class DoctorDTOConverter {
                 doctorId,
                 null,
                 updateDTO.name(),
-                updateDTO.specialty(),
+                updateDTO.specialties(),
                 updateDTO.crm()
         );
     }

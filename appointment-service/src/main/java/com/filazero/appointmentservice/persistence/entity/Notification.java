@@ -46,9 +46,6 @@ public class Notification {
     @Column(name = "fl_expired")
     private Boolean isExpired;
 
-    //private String response;
-
-
     public Long getId() {
         return id;
     }

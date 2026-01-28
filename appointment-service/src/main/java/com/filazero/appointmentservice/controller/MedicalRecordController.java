@@ -24,7 +24,6 @@ public class MedicalRecordController {
     private final Logger logger = LoggerFactory.getLogger(MedicalRecordController.class);
     private final MedicalRecordService medicalRecordService;
 
-    // Constantes de roles para controle de acesso
     private static final String ADMIN_ROLE = "hasRole('ADMIN')";
     private static final String DOCTOR_ROLE = "hasRole('DOCTOR')";
     private static final String NURSE_ROLE = "hasRole('NURSE')";
@@ -37,7 +36,7 @@ public class MedicalRecordController {
     }
 
     @PostMapping
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<MedicalRecordResponseDTO> createMedicalRecord(@Valid @RequestBody CreateMedicalRecordRequestDTO createMedicalRecordRequestDTO) {
         logger.info("Handling POST request to /medicalrecords");
         MedicalRecordResponseDTO response = medicalRecordService.create(createMedicalRecordRequestDTO);
@@ -45,7 +44,7 @@ public class MedicalRecordController {
     }
 
     @GetMapping
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_ROLE + ")")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE + " or (" + PATIENT_ROLE + ")")
     public ResponseEntity<List<MedicalRecordResponseDTO>> getAllMedicalRecords(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -59,14 +58,14 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
     public ResponseEntity<MedicalRecordResponseDTO> getMedicalRecordById(@PathVariable Long id) {
         logger.info("Handling GET request to /medicalrecords/{}", id);
         return ResponseEntity.ok(medicalRecordService.getById(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<MedicalRecordResponseDTO> updateMedicalRecord(
             @PathVariable Long id,
             @Valid @RequestBody UpdateMedicalRecordRequestDTO updateMedicalRecordRequestDTO
@@ -77,7 +76,7 @@ public class MedicalRecordController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<Void> deleteMedicalRecord(@PathVariable Long id) {
         logger.info("Handling DELETE request to /medicalrecords/{}", id);
         medicalRecordService.delete(id);
