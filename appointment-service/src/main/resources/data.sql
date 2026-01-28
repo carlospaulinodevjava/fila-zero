@@ -86,19 +86,19 @@ WHERE NOT EXISTS (
 
 -- Inserir pacientes (SEM criticidade - agora está no appointment)
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'ana.lima'), 'Paciente Ana Lima', '1990-01-01', 'DOC123456', '11987654321', 'ana.lima@exemplo.com', 'Rua das Flores, 123', 100
+SELECT (SELECT id FROM users WHERE username = 'ana.lima'), 'Paciente Ana Lima', '1990-01-01', 'DOC123456', '11987654321', 'lucas.llopes99@gmail.com', 'Rua das Flores, 123', 100
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC123456'
 );
 
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'renato.ds'), 'Paciente Renato DS', '1990-01-01', 'DOC66666', '11987656666', 'renato.ds@exemplo.com', 'Rua das Flores, 123', 100
+SELECT (SELECT id FROM users WHERE username = 'renato.ds'), 'Paciente Renato DS', '1990-01-01', 'DOC66666', '11987656666', 'lucas.llopes99@gmail.com', 'Rua das Flores, 123', 100
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC66666'
 );
 
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'erick'), 'Paciente Erick', '1990-01-01', '12345678902', '11987656666', 'erick@exemplo.com', 'Rua das Flores, 123', 100
+SELECT (SELECT id FROM users WHERE username = 'erick'), 'Paciente Erick', '1990-01-01', '12345678902', '11987656666', 'lucas.llopes99@gmail.com', 'Rua das Flores, 123', 100
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = '12345678902'
 );
@@ -109,7 +109,7 @@ VALUES ('maria.santos', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXl
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'maria.santos'), 'Maria Santos', '1985-05-15', 'DOC789456', '11987654322', 'maria.santos@exemplo.com', 'Av. Paulista, 1000', 120
+SELECT (SELECT id FROM users WHERE username = 'maria.santos'), 'Maria Santos', '1985-05-15', 'DOC789456', '11987654322', 'lucas.llopes99@gmail.com', 'Av. Paulista, 1000', 120
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC789456'
 );
@@ -119,7 +119,7 @@ VALUES ('pedro.costa', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQtXlW
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'pedro.costa'), 'Pedro Costa', '1992-08-20', 'DOC321654', '11987654323', 'pedro.costa@exemplo.com', 'Rua Augusta, 500', 95
+SELECT (SELECT id FROM users WHERE username = 'pedro.costa'), 'Pedro Costa', '1992-08-20', 'DOC321654', '11987654323', 'lucas.llopes99@gmail.com', 'Rua Augusta, 500', 95
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC321654'
 );

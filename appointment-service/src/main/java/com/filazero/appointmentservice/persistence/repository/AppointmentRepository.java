@@ -20,9 +20,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     Page<Appointment> findAll(Pageable pageable);
 
-    @Query("SELECT a FROM Appointment a WHERE a.status = :status " +
-            "AND a.appointmentDate >= :startDate " +
-            "AND a.sentAt IS NULL")
+    @Query("""
+                SELECT a
+                FROM Appointment a
+                WHERE a.status = :status
+                  AND a.appointmentDate BETWEEN :startDate AND :endDate
+                  AND a.sentAt IS NULL
+                ORDER BY a.appointmentDate ASC
+            """)
     List<Appointment> findAppointmentsNeedingConfirmation(
             @Param("status") AppointmentStatus status,
             @Param("startDate") LocalDateTime startDate,
@@ -37,22 +42,22 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> buscarVagasAbertas(@Param("agora") LocalDateTime agora);
 
     @Query("""
-    SELECT a
-    FROM Appointment a
-    WHERE a.doctor.id = :doctorId
-      AND a.appointmentDate >= :dataMinima
-      AND a.status IN ('AGENDADO', 'CONFIRMADO')
-      AND NOT EXISTS (
-          SELECT 1
-          FROM Notification n
-          WHERE n.appointment = a
-            AND n.type = 'REALOCACAO'
-            AND n.status = 'ENVIADO'
-            AND (n.isExpired = false OR n.isExpired IS NULL)
-            AND (n.expiresAt IS NULL OR n.expiresAt > :agora)
-      )
-    ORDER BY a.appointmentDate ASC
-""")
+                SELECT a
+                FROM Appointment a
+                WHERE a.doctor.id = :doctorId
+                  AND a.appointmentDate >= :dataMinima
+                  AND a.status IN ('AGENDADO', 'CONFIRMADO')
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM Notification n
+                      WHERE n.appointment = a
+                        AND n.type = 'REALOCACAO'
+                        AND n.status = 'ENVIADO'
+                        AND (n.isExpired = false OR n.isExpired IS NULL)
+                        AND (n.expiresAt IS NULL OR n.expiresAt > :agora)
+                  )
+                ORDER BY a.appointmentDate ASC
+            """)
     List<Appointment> buscarCandidatosElegiveisParaAntecipacao(
             @Param("doctorId") Long doctorId,
             @Param("dataMinima") LocalDateTime dataMinima,
