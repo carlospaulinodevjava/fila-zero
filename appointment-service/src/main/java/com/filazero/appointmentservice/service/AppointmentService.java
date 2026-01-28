@@ -7,7 +7,6 @@ import com.filazero.appointmentservice.persistence.entity.Appointment;
 import com.filazero.appointmentservice.persistence.entity.Doctor;
 import com.filazero.appointmentservice.persistence.entity.Nurse;
 import com.filazero.appointmentservice.persistence.entity.Patient;
-import com.filazero.appointmentservice.persistence.entity.WaitingQueue;
 import com.filazero.appointmentservice.persistence.repository.AppointmentRepository;
 import com.filazero.appointmentservice.persistence.repository.DoctorRepository;
 import com.filazero.appointmentservice.persistence.repository.NurseRepository;
@@ -26,8 +25,7 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final NurseRepository nurseRepository;
-    private final WaitingQueueService waitingQueueService;
-    private final PatientScoreService patientScoreService;
+
     private final NotificationService notificationService;
     private final com.filazero.appointmentservice.service.validator.AppointmentValidationService validationService;
 
@@ -35,16 +33,12 @@ public class AppointmentService {
                               PatientRepository patientRepository,
                               DoctorRepository doctorRepository,
                               NurseRepository nurseRepository,
-                              WaitingQueueService waitingQueueService,
-                              PatientScoreService patientScoreService,
                               NotificationService notificationService,
                               com.filazero.appointmentservice.service.validator.AppointmentValidationService validationService) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.nurseRepository = nurseRepository;
-        this.waitingQueueService = waitingQueueService;
-        this.patientScoreService = patientScoreService;
         this.notificationService = notificationService;
         this.validationService = validationService;
     }
@@ -180,85 +174,7 @@ public class AppointmentService {
         appointment.setUpdatedAt(LocalDateTime.now());
         appointmentRepository.save(appointment);
 
-        patientScoreService.updateScore(appointment.getPatient().getId(), AppointmentStatus.CONFIRMADO);
 
         return toResponseDTO(appointment);
-    }
-
-    public AppointmentResponseDTO cancelAppointment(Long appointmentId, String reason) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-            .orElseThrow(() -> new DataNotFoundException("Agendamento não encontrado com ID: " + appointmentId));
-
-        appointment.setStatus(AppointmentStatus.CANCELADO_PELO_PACIENTE);
-        appointment.setUpdatedAt(LocalDateTime.now());
-        appointmentRepository.save(appointment);
-
-        patientScoreService.updateScore(appointment.getPatient().getId(), AppointmentStatus.CANCELADO_PELO_PACIENTE);
-
-        reallocateAppointment(appointment);
-
-        return toResponseDTO(appointment);
-    }
-
-    private void reallocateAppointment(Appointment cancelledAppointment) {
-        int attempts = cancelledAppointment.getReallocationAttempts() != null ? 
-            cancelledAppointment.getReallocationAttempts() : 0;
-        
-        if (attempts >= 3) {
-            cancelledAppointment.setStatus(AppointmentStatus.VAGA_ABERTA);
-            cancelledAppointment.setUpdatedAt(LocalDateTime.now());
-            appointmentRepository.save(cancelledAppointment);
-            return;
-        }
-
-        Optional<WaitingQueue> nextInQueue = waitingQueueService.findNextInQueue(
-            cancelledAppointment.getDoctor().getId()
-        );
-
-        if (nextInQueue.isPresent()) {
-            WaitingQueue queueEntry = nextInQueue.get();
-            
-            Appointment newAppointment = new Appointment();
-            newAppointment.setPatient(queueEntry.getPatient());
-            newAppointment.setDoctor(cancelledAppointment.getDoctor());
-            newAppointment.setNurse(cancelledAppointment.getNurse());
-            newAppointment.setAppointmentDate(cancelledAppointment.getAppointmentDate());
-            newAppointment.setStatus(AppointmentStatus.REMARCACAO_OFERECIDA);
-            newAppointment.setCreatedAt(LocalDateTime.now());
-            newAppointment.setReallocationAttempts(attempts + 1);
-            appointmentRepository.save(newAppointment);
-
-            waitingQueueService.markAsScheduled(queueEntry.getId());
-
-            notificationService.createRescheduleNotification(newAppointment);
-        } else {
-            cancelledAppointment.setStatus(AppointmentStatus.VAGA_ABERTA);
-            cancelledAppointment.setUpdatedAt(LocalDateTime.now());
-            appointmentRepository.save(cancelledAppointment);
-        }
-    }
-
-    public void markAsCompleted(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-            .orElseThrow(() -> new DataNotFoundException("Agendamento não encontrado com ID: " + appointmentId));
-
-        appointment.setStatus(AppointmentStatus.REALIZADO);
-        appointment.setUpdatedAt(LocalDateTime.now());
-        appointmentRepository.save(appointment);
-
-        patientScoreService.updateScore(appointment.getPatient().getId(), AppointmentStatus.REALIZADO);
-    }
-
-    public void markAsNoShow(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-            .orElseThrow(() -> new DataNotFoundException("Agendamento não encontrado com ID: " + appointmentId));
-
-        appointment.setStatus(AppointmentStatus.CANCELADO_POR_INCONFIRMACAO);
-        appointment.setUpdatedAt(LocalDateTime.now());
-        appointmentRepository.save(appointment);
-
-        patientScoreService.updateScore(appointment.getPatient().getId(), AppointmentStatus.CANCELADO_POR_INCONFIRMACAO);
-
-        reallocateAppointment(appointment);
     }
 }

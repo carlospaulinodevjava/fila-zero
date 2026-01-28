@@ -100,7 +100,7 @@ public class AppointmentController {
             @RequestBody(required = false) com.filazero.appointmentservice.dto.CancelAppointmentRequestDTO request) {
         logger.info("Handling POST request to /appointments/{}/cancel", id);
         String reason = request != null ? request.reason() : "Sem motivo informado";
-        AppointmentResponseDTO response = appointmentService.cancelAppointment(id, reason);
-        return ResponseEntity.ok(response);
+        //AppointmentResponseDTO response = appointmentService.cancelAppointment(id, reason);
+        return ResponseEntity.ok(null);
     }
 }

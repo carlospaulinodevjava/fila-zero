@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.web.servlet.function.ServerResponse.status;
-
 @RestController
 @RequestMapping("/batches")
 public class BatchInvocationController {
@@ -35,7 +33,7 @@ public class BatchInvocationController {
         return  ResponseEntity.status(HttpStatus.OK).body(processStarted);
     }
 
-    @PostMapping("/execute-notification-process")
+    @PostMapping("/execute-reallocate-process")
     public ResponseEntity<Boolean> executeReallocateProcess() {
 
         boolean processStarted = true;

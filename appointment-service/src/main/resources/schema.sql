@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS appointments (
     updated_at TIMESTAMP DEFAULT NOW(),
     sent_at TIMESTAMP DEFAULT NULL,
     confirmation_deadline TIMESTAMP DEFAULT NULL,
-    reallocation_attempts INTEGER DEFAULT 0,
+    offered_slot_appointment_id BIGINT NULL,
+    FOREIGN KEY (offered_slot_appointment_id) REFERENCES appointments (id),
     FOREIGN KEY (patient_id) REFERENCES patients (id),
     FOREIGN KEY (doctor_id) REFERENCES doctors (id),
     FOREIGN KEY (nurse_id) REFERENCES nurses (id)
@@ -103,25 +104,6 @@ CREATE TABLE IF NOT EXISTS notification (
     FOREIGN KEY (patient_id) REFERENCES patients (id)
 );
 
-CREATE TABLE IF NOT EXISTS waiting_queues (
-    id BIGSERIAL PRIMARY KEY,
-    patient_id BIGINT NOT NULL,
-    specialty_id BIGINT NOT NULL,
-    preferred_doctor_id BIGINT,
-    status VARCHAR(20) NOT NULL DEFAULT 'AGUARDANDO',
-    priority_score INTEGER NOT NULL,
-    criticidade VARCHAR(20),
-    entered_at TIMESTAMP NOT NULL,
-    notified_at TIMESTAMP,
-    estimated_wait_time INTEGER,
-    notes TEXT,
-    FOREIGN KEY (patient_id) REFERENCES patients (id),
-    FOREIGN KEY (specialty_id) REFERENCES specialties (id),
-    FOREIGN KEY (preferred_doctor_id) REFERENCES doctors (id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_waiting_queue_specialty_status ON waiting_queues (specialty_id, status);
-CREATE INDEX IF NOT EXISTS idx_waiting_queue_priority_score ON waiting_queues (priority_score DESC);
 CREATE INDEX IF NOT EXISTS idx_notification_tracking_token ON notification (tracking_token);
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments (status);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (appointment_date);
