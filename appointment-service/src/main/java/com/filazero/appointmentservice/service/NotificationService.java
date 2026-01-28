@@ -114,6 +114,29 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
+    @Transactional
+    public Notification createRescheduleNotificationAndSend(Appointment offeredAppointment, LocalDateTime expiresAt) {
+        Notification notification = createNotificationCustomExpiry(offeredAppointment, NotificationType.REALOCACAO, expiresAt);
+
+        emailService.sendRescheduleOfferEmail(notification);
+
+        return notification;
+    }
+
+    private Notification createNotificationCustomExpiry(Appointment appointment, NotificationType type, LocalDateTime expiresAt) {
+        Notification notification = new Notification();
+        notification.setAppointment(appointment);
+        notification.setPatient(appointment.getPatient());
+        notification.setTrackingToken(UUID.randomUUID().toString());
+        notification.setType(type);
+        notification.setStatus(NotificationStatus.ENVIADO);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setExpiresAt(expiresAt);
+        notification.setExpired(false);
+
+        return notificationRepository.save(notification);
+    }
+
     private Notification validateAndGetNotification(String trackingToken) {
         Notification notification = notificationRepository.findByTrackingToken(trackingToken)
                 .orElseThrow(() -> new IllegalArgumentException("Token inválido ou inexistente"));

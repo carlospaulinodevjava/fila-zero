@@ -40,19 +40,6 @@ services:
         condition: service_healthy
     networks: [app-network]
 
-  notification-service:
-    build:
-      context: ./notification-service
-      dockerfile: Dockerfile
-    environment:
-      <<: *variaveis-comuns
-      SPRING_PROFILES_ACTIVE: docker
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
-    ports:
-      - "8081:8081"
-      - "5006:5006"
-    networks: [app-network]
-
 volumes:
   healthcore_dbdata:
 

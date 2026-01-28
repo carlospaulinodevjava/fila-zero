@@ -88,4 +88,47 @@ public class EmailService {
         }
     }
 
+    public void sendRescheduleOfferEmail(Notification notification) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(notification.getPatient().getEmail());
+            helper.setSubject("Oferta de antecipação de consulta - FilaZero");
+            helper.setFrom("filazerofiap@gmail.com");
+
+            Context context = new Context();
+            context.setVariable("patientName", notification.getPatient().getName());
+
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+
+            context.setVariable(
+                    "appointmentDate",
+                    notification.getAppointment()
+                            .getAppointmentDate()
+                            .format(formatter)
+            );
+
+            context.setVariable("trackingToken", notification.getTrackingToken());
+
+            context.setVariable(
+                    "confirmUrl",
+                    "http://localhost:8080/webhook/process-confirmation"
+            );
+            context.setVariable(
+                    "cancelUrl",
+                    "http://localhost:8080/webhook/process-cancellation"
+            );
+
+            String html = templateEngine.process("email/email-template", context);
+
+            helper.setText(html, true);
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Erro ao enviar e-mail de oferta de antecipação", e);
+        }
+    }
 }

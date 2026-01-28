@@ -3,7 +3,6 @@ package com.filazero.appointmentservice.controller;
 import com.filazero.appointmentservice.dto.PatientScoreResponseDTO;
 import com.filazero.appointmentservice.persistence.entity.Patient;
 import com.filazero.appointmentservice.persistence.repository.PatientRepository;
-import com.filazero.appointmentservice.service.PatientScoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

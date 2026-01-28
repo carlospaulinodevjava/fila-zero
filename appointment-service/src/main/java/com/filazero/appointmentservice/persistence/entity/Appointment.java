@@ -52,11 +52,11 @@ public class Appointment {
     @Column(name = "confirmation_deadline")
     private LocalDateTime confirmationDeadline;
 
-    @Column(name = "reallocation_attempts")
-    private Integer reallocationAttempts = 0;
-
     @OneToOne(mappedBy = "appointment")
     private MedicalRecord medicalRecord;
+
+    @Column(name = "offered_slot_appointment_id")
+    private Long offeredSlotAppointmentId;
 
     public Long getId() {
         return id;
@@ -154,19 +154,19 @@ public class Appointment {
         this.confirmationDeadline = confirmationDeadline;
     }
 
-    public Integer getReallocationAttempts() {
-        return reallocationAttempts;
-    }
-
-    public void setReallocationAttempts(Integer reallocationAttempts) {
-        this.reallocationAttempts = reallocationAttempts;
-    }
-
     public CriticalityLevel getCriticidade() {
         return criticidade;
     }
 
     public void setCriticidade(CriticalityLevel criticidade) {
         this.criticidade = criticidade;
+    }
+
+    public Long getOfferedSlotAppointmentId() {
+        return offeredSlotAppointmentId;
+    }
+
+    public void setOfferedSlotAppointmentId(Long offeredSlotAppointmentId) {
+        this.offeredSlotAppointmentId = offeredSlotAppointmentId;
     }
 }
