@@ -94,10 +94,6 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    /* =========================
-       Métodos auxiliares
-       ========================= */
-
     private Notification createNotification(Appointment appointment, NotificationType type) {
         Notification notification = new Notification();
         notification.setAppointment(appointment);
@@ -108,8 +104,6 @@ public class NotificationService {
         notification.setSentAt(LocalDateTime.now());
         notification.setExpiresAt(LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS));
         notification.setExpired(false);
-        // notification.setMessage(buildMessage(notification));
-        // notification.setChannel(NotificationChannel.EMAIL);
 
         return notificationRepository.save(notification);
     }

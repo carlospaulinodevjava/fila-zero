@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notifications")
 public class NotificationController {
 
+    private static final String ADMIN_ROLE = "hasRole('ADMIN')";
+    private static final String DOCTOR_ROLE = "hasRole('DOCTOR')";
+    private static final String NURSE_ROLE = "hasRole('NURSE')";
+
     private final NotificationService service;
 
     public NotificationController(NotificationService service) {
@@ -19,6 +23,7 @@ public class NotificationController {
 
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<?> createNurse(@RequestParam Long id) {
         service.createConfirmationNotification(id);
         return ResponseEntity.ok().build();

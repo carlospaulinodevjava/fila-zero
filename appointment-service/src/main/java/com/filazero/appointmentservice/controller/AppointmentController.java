@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping("/appointments")
 public class AppointmentController {
 
-    // Constantes de roles para controle de acesso
     private static final String ADMIN_ROLE = "hasRole('ADMIN')";
     private static final String DOCTOR_ROLE = "hasRole('DOCTOR')";
     private static final String NURSE_ROLE = "hasRole('NURSE')";
@@ -46,7 +45,7 @@ public class AppointmentController {
     }
 
     @GetMapping
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<List<AppointmentResponseDTO>> getAllAppointments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -60,7 +59,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
     public ResponseEntity<AppointmentResponseDTO> getAppointmentById(@PathVariable Long id) {
         logger.info("Handling GET request to /appointments/{}", id);
         return ResponseEntity.ok(appointmentService.getById(id));
@@ -68,7 +67,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<AppointmentResponseDTO> updateAppointment(
             @PathVariable Long id,
             @Valid @RequestBody UpdateAppointmentRequestDTO updateAppointmentRequestDTO
@@ -79,7 +78,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE)
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         logger.info("Handling DELETE request to /appointments/{}", id);
         appointmentService.delete(id);
@@ -87,7 +86,7 @@ public class AppointmentController {
     }
 
     @PostMapping("/{id}/confirm")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
     public ResponseEntity<AppointmentResponseDTO> confirmAppointment(@PathVariable Long id) {
         logger.info("Handling POST request to /appointments/{}/confirm", id);
         AppointmentResponseDTO response = appointmentService.confirmAppointment(id);
@@ -95,7 +94,7 @@ public class AppointmentController {
     }
 
     @PostMapping("/{id}/cancel")
-    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
+    @PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE + " or (" + PATIENT_SELF_ACCESS + ")")
     public ResponseEntity<AppointmentResponseDTO> cancelAppointment(
             @PathVariable Long id,
             @RequestBody(required = false) com.filazero.appointmentservice.dto.CancelAppointmentRequestDTO request) {

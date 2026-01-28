@@ -24,7 +24,7 @@ public class WaitingQueueController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<QueuePositionResponseDTO> addToQueue(@Valid @RequestBody AddToQueueRequestDTO request) {
         WaitingQueue queue = waitingQueueService.addToQueue(
             request.patientId(),
@@ -52,7 +52,7 @@ public class WaitingQueueController {
     }
 
     @GetMapping("/patient/{patientId}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<List<QueuePositionResponseDTO>> getPatientQueues(@PathVariable Long patientId) {
         List<WaitingQueue> queues = waitingQueueService.getPatientActiveQueue(patientId);
 
@@ -79,7 +79,7 @@ public class WaitingQueueController {
     }
 
     @GetMapping("/specialty/{specialtyId}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN')")
     public ResponseEntity<List<QueuePositionResponseDTO>> getQueueBySpecialty(@PathVariable Long specialtyId) {
         List<WaitingQueue> queues = waitingQueueService.getQueueBySpecialty(specialtyId);
         long totalInQueue = waitingQueueService.countWaitingBySpecialty(specialtyId);
@@ -102,7 +102,7 @@ public class WaitingQueueController {
     }
 
     @DeleteMapping("/{queueId}")
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('PATIENT')")
+    @PreAuthorize("hasRole('DOCTOR') or hasRole('NURSE') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<Void> removeFromQueue(@PathVariable Long queueId) {
         waitingQueueService.removeFromQueue(queueId);
         return ResponseEntity.noContent().build();
