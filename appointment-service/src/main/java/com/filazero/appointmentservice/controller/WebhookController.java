@@ -20,7 +20,6 @@ public class WebhookController {
     }
 
     @PostMapping("/process-confirmation")
-    @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<?> processConfirmation(
             @ModelAttribute NotificationResponseRequestDTO request) {
 
@@ -29,7 +28,6 @@ public class WebhookController {
     }
 
     @PostMapping("/process-cancellation")
-    @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
     public ResponseEntity<?> processCancellation(@ModelAttribute NotificationResponseRequestDTO request) {
 
         notificationService.processCancellation(request.trackingToken());

@@ -33,7 +33,6 @@ public class NotificationService {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Erro ao achar a consulta"));
         Notification notification = createNotification(appointment, NotificationType.CONFIRMACAO_5_DIAS);
         emailService.sendConfirmationEmail(notification);
-        expiresToken(notification);
         return notification;
     }
 
@@ -59,7 +58,7 @@ public class NotificationService {
         appointment.setUpdatedAt(LocalDateTime.now());
 
         appointmentRepository.save(appointment);
-
+        expiresToken(notification);
         return notificationRepository.save(notification);
     }
 
@@ -91,6 +90,7 @@ public class NotificationService {
         appointmentRepository.save(appointment);
 
         emailService.sendCancellationConfirmationEmail(notification, reason);
+        expiresToken(notification);
         return notificationRepository.save(notification);
     }
 
@@ -154,7 +154,7 @@ public class NotificationService {
 
     private void expiresToken(Notification notification){
         notification.setExpiresAt(LocalDateTime.now());
-        notificationRepository.save(notification);
+        notification.setExpired(true);
     }
 
 }

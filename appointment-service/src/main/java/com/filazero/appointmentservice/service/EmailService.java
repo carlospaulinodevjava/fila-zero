@@ -78,7 +78,7 @@ public class EmailService {
             context.setVariable("doctorName", notification.getAppointment().getDoctor().getName());
             context.setVariable("reason", reason != null ? reason : "Não informado");
             
-            String html = templateEngine.process("email/cancellation-confirmation", context);
+            String html = templateEngine.process("email/cancellation-template", context);
             helper.setText(html, true);
 
             mailSender.send(message);
