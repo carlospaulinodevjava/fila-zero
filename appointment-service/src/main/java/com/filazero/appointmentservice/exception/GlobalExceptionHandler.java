@@ -3,6 +3,7 @@ package com.filazero.appointmentservice.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -271,6 +272,103 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleAppointConfirmationTwice(IllegalStateException ex) {
+
+        log.error("Tentativa de confirmar a consulta duas vezes: {}", ex.getMessage());
+
+        String html = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ação já realizada</title>
+                </head>
+                <body style="
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif;
+                    background-color: #f2f2f2;
+                ">
+                
+                    <div style="
+                        max-width: 420px;
+                        margin: 80px auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        padding: 32px;
+                        text-align: center;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        color: #a81714;
+                    ">
+                        <h2 style="margin-top: 0;">
+                            Ação já realizada
+                        </h2>
+                
+                        <p style="margin-top: 16px; font-size: 15px;">
+                            Esta notificação já foi respondida anteriormente.
+                        </p>
+                
+                        <p style="margin-top: 20px; font-size: 14px; color: #4a6fa5;">
+                            Caso tenha dúvidas, entre em contato com a clínica.
+                        </p>
+                    </div>
+                
+                </body>
+                </html>
+                """;
+
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(html);
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<String> handleExpiredTokenException(Exception ex) {
+        log.error("Tentativa de confirmar a consulta com o token expirado: {}", ex.getMessage());
+
+        String html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Link expirado</title>
+        </head>
+        <body style="
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        ">
+
+            <div style="
+                max-width: 420px;
+                margin: 80px auto;
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 32px;
+                text-align: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                color: #1f3a5f;
+            ">
+                <h2 style="margin-top: 0;">
+                    Link expirado
+                </h2>
+
+                <p style="margin-top: 16px; font-size: 15px;">
+                    Este link não é mais válido porque expirou.
+                </p>
+
+                <p style="margin-top: 20px; font-size: 14px; color: #4a6fa5;">
+                    Caso tenha dúvidas, entre em contato conosco.
+                </p>
+            </div>
+
+        </body>
+        </html>
+        """;
+
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(html);
+    }
+
     private String determineAuthorizationMessage(AuthorizationDeniedException ex) {
         String message = ex.getMessage();
 
@@ -287,5 +385,6 @@ public class GlobalExceptionHandler {
             String code,
             String message,
             LocalDateTime timestamp
-    ) {}
+    ) {
+    }
 }

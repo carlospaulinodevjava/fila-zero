@@ -3,6 +3,7 @@ package com.filazero.appointmentservice.service;
 import com.filazero.appointmentservice.enums.AppointmentStatus;
 import com.filazero.appointmentservice.enums.NotificationStatus;
 import com.filazero.appointmentservice.enums.NotificationType;
+import com.filazero.appointmentservice.exception.ExpiredTokenException;
 import com.filazero.appointmentservice.persistence.entity.Appointment;
 import com.filazero.appointmentservice.persistence.entity.Notification;
 import com.filazero.appointmentservice.persistence.repository.AppointmentRepository;
@@ -135,13 +136,13 @@ public class NotificationService {
         Notification notification = notificationRepository.findByTrackingToken(trackingToken)
                 .orElseThrow(() -> new IllegalArgumentException("Token inválido ou inexistente"));
 
-        if (notification.getStatus() == NotificationStatus.RESPONDIDO) {
-            throw new IllegalStateException("Notificação já respondida");
+        if (isExpired(notification) && !notification.getStatus().equals(NotificationStatus.RESPONDIDO)) {
+            notification.setExpired(true);
+            throw new ExpiredTokenException("Token expirado");
         }
 
-        if (isExpired(notification)) {
-            notification.setExpired(true);
-            throw new IllegalStateException("Token expirado");
+        if (notification.getStatus() == NotificationStatus.RESPONDIDO) {
+            throw new IllegalStateException("Notificação já respondida");
         }
 
         return notification;

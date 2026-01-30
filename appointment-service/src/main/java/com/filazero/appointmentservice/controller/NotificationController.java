@@ -24,7 +24,7 @@ public class NotificationController {
 
     @PostMapping
     @org.springframework.security.access.prepost.PreAuthorize(DOCTOR_ROLE + " or " + NURSE_ROLE + " or " + ADMIN_ROLE)
-    public ResponseEntity<?> createNurse(@RequestParam Long id) {
+    public ResponseEntity<?> createConfirmationNotification(@RequestParam Long id) {
         service.createConfirmationNotification(id);
         return ResponseEntity.ok().build();
     }
