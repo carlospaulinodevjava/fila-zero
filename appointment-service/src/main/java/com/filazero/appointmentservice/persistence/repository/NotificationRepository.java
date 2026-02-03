@@ -17,11 +17,18 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     boolean existsByAppointmentIdAndTypeIn(Long appointmentId, List<NotificationType> types);
 
-    @Query("SELECT n FROM Notification n WHERE n.status = :status " +
-           "AND n.expiresAt < :now " +
-           "AND n.isExpired = false")
-    List<Notification> findExpiredNotifications(
-        @Param("status") NotificationStatus status,
-        @Param("now") LocalDateTime now
+    @Query("""
+                SELECT n
+                FROM Notification n
+                WHERE n.isExpired = false
+                  AND (
+                        (n.status = :statusEnviado AND n.expiresAt IS NOT NULL AND n.expiresAt < :now)
+                     OR (n.status = :statusCancelado)
+                  )
+            """)
+    List<Notification> findExpiredOrCancelledNotifications(
+            @Param("statusEnviado") NotificationStatus statusEnviado,
+            @Param("statusCancelado") NotificationStatus statusCancelado,
+            @Param("now") LocalDateTime now
     );
 }

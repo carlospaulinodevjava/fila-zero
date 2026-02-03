@@ -43,7 +43,7 @@ public class ScheduledNotificationService {
         this.notificationService = notificationService;
     }
 
-    @Scheduled(cron = "0 0 8 * * *")
+    //@Scheduled(cron = "0 0 8 * * *")
     @Transactional
     public void sendConfirmationNotifications() {
         logger.info("=== Iniciando job de envio de notificações de confirmação ===");
@@ -116,8 +116,8 @@ public class ScheduledNotificationService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        List<Notification> expiredNotifications = notificationRepository.findExpiredNotifications(
-                NotificationStatus.ENVIADO,
+        List<Notification> expiredNotifications = notificationRepository.findExpiredOrCancelledNotifications(
+                NotificationStatus.ENVIADO, NotificationStatus.CANCELADO,
                 now
         );
 
@@ -155,8 +155,8 @@ public class ScheduledNotificationService {
         notificationRepository.save(notification);
 
         //  abrir vaga para appointments nao confirmados, seja da notificacao inicial ou de remarcacao oferecida
-        if (appointment.getStatus() == AppointmentStatus.PENDENTE_CONFIRMACAO ||
-                appointment.getStatus() == AppointmentStatus.REMARCACAO_OFERECIDA) {
+        if (appointment.getStatus() == AppointmentStatus.CANCELADO_PELO_PACIENTE ||
+                appointment.getStatus() == AppointmentStatus.REMARCACAO_OFERECIDA || appointment.getStatus() == AppointmentStatus.AGENDADO) {
 
             logger.info("Marcando agendamento ID {} como VAGA_ABERTA (expiração). Status anterior: {}",
                     appointment.getId(), appointment.getStatus());
