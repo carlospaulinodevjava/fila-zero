@@ -1,5 +1,4 @@
--- DEPRECATED: moved to Flyway migration V1__schema.sql
--- Do not use schema.sql directly; Flyway will run migrations in classpath:db/migration
+-- Flyway migration: initial schema (derived from schema.sql)
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -57,6 +56,7 @@ CREATE TABLE IF NOT EXISTS patients (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+-- Appointments table with a named UNIQUE CONSTRAINT so ON CONFLICT ON CONSTRAINT works
 CREATE TABLE IF NOT EXISTS appointments (
     id BIGSERIAL PRIMARY KEY,
     patient_id BIGINT NOT NULL,
@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS appointments (
     FOREIGN KEY (offered_slot_appointment_id) REFERENCES appointments (id),
     FOREIGN KEY (patient_id) REFERENCES patients (id),
     FOREIGN KEY (doctor_id) REFERENCES doctors (id),
-    FOREIGN KEY (nurse_id) REFERENCES nurses (id)
+    FOREIGN KEY (nurse_id) REFERENCES nurses (id),
+    CONSTRAINT ux_appointments_patient_doctor_date UNIQUE (patient_id, doctor_id, appointment_date)
 );
 
 CREATE TABLE IF NOT EXISTS medical_records (
@@ -111,7 +112,3 @@ CREATE INDEX IF NOT EXISTS idx_notification_tracking_token ON notification (trac
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments (status);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (appointment_date);
 
--- Garante que exista um índice único para (patient_id, doctor_id, appointment_date)
--- Isso permite usar ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING no data.sql
-CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_patient_doctor_date
-ON appointments (patient_id, doctor_id, appointment_date);

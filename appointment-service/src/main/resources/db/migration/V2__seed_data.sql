@@ -1,5 +1,4 @@
--- DEPRECATED: moved to Flyway migration V2__seed_data.sql
--- Do not use data.sql directly; Flyway will run migrations in classpath:db/migration
+-- Flyway migration: seed data (idempotent)
 
 -- Inserir usuários de teste
 INSERT INTO users (username, password, role, enabled, created_at)
@@ -278,3 +277,4 @@ WHERE t.appt_id IS NOT NULL
   AND NOT EXISTS (
     SELECT 1 FROM medical_records mr WHERE mr.appointment_id = t.appt_id
 );
+
