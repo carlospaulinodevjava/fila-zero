@@ -52,7 +52,7 @@ ON CONFLICT (name) DO NOTHING;
 INSERT INTO doctors (user_id, name, crm)
 SELECT (SELECT id FROM users WHERE username = 'joao.silva'), 'João Silva', 'CRM12345'
 WHERE NOT EXISTS (
-    SELECT 1 FROM doctors WHERE crm = 'CRM12345'
+    SELECT 1 FROM doctors WHERE crm = 'CRM66666'
 );
 
 INSERT INTO doctors (user_id, name, crm)
@@ -129,7 +129,7 @@ VALUES ('julia.oliveira', '$2a$10$qh2BLer14kkg58hXI2nWjOYAHn3/YapvsEPLdBvCnBPhQt
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO patients (user_id, name, date_of_birth, document, phone, email, address, engagement_score)
-SELECT (SELECT id FROM users WHERE username = 'julia.oliveira'), 'Julia Oliveira', '1988-03-10', 'DOC987321', '11987654324', 'julia.oliveira@exemplo.com', 'Rua Oscar Freire, 200', 110
+SELECT (SELECT id FROM users WHERE username = 'julia.oliveira'), 'Julia Oliveira', '1988-03-10', 'DOC987321', '11987654324', 'lucas.llopes99@gmail.com', 'Rua Oscar Freire, 200', 110
 WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC987321'
 );
@@ -169,7 +169,7 @@ WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = 'DOC321654'),
-    (SELECT id FROM doctors WHERE crm = 'CRM12345'),
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
     (SELECT dt FROM appt),
     'AGENDADO',
@@ -183,7 +183,7 @@ WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = 'DOC789456'),
-    (SELECT id FROM doctors WHERE crm = 'CRM12345'),
+    (SELECT id FROM doctors WHERE crm = 'CRM66666'),
     (SELECT id FROM nurses WHERE coren = 'COREN67890'),
     (SELECT dt FROM appt),
     'AGENDADO',

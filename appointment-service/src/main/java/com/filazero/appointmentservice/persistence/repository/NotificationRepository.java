@@ -20,7 +20,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
                 SELECT n
                 FROM Notification n
-                WHERE n.isExpired = false
+                WHERE 1=1
                   AND (
                         (n.status = :statusEnviado AND n.expiresAt IS NOT NULL AND n.expiresAt < :now)
                      OR (n.status = :statusCancelado)
