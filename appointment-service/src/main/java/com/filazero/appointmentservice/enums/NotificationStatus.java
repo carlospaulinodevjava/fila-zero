@@ -4,5 +4,6 @@ public enum NotificationStatus {
     ENVIADO,
     LIDO,
     RESPONDIDO,
+    CANCELADO,
     FALHA
 }

@@ -84,6 +84,7 @@ public class EmailService {
             mailSender.send(message);
 
         } catch (MessagingException e) {
+
             throw new RuntimeException("Erro ao enviar e-mail de confirmação de cancelamento", e);
         }
     }

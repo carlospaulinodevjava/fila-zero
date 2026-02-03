@@ -79,7 +79,7 @@ public class NotificationService {
         }
 
         notification.setRespondedAt(LocalDateTime.now());
-        notification.setStatus(NotificationStatus.RESPONDIDO);
+        notification.setStatus(NotificationStatus.CANCELADO);
         appointment.setStatus(AppointmentStatus.CANCELADO_PELO_PACIENTE);
         appointment.setUpdatedAt(LocalDateTime.now());
         notification.setExpiresAt(LocalDateTime.now());
