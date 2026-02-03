@@ -134,8 +134,10 @@ WHERE NOT EXISTS (
     SELECT 1 FROM patients WHERE document = 'DOC987321'
 );
 
+TRUNCATE TABLE appointments RESTART IDENTITY CASCADE;
+
 -- Inserir agendamentos COM criticidade (protegidos contra duplicação com ON CONFLICT)
-WITH appt AS (SELECT NOW() + INTERVAL '30 days' AS dt)
+WITH appt AS (SELECT NOW() + INTERVAL '5 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = '12345678902'),
@@ -147,9 +149,9 @@ VALUES (
     'Consulta de rotina',
     NOW()
 )
-ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
 
-WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
+WITH appt AS (SELECT NOW() + INTERVAL '5 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = 'DOC66666'),
@@ -161,9 +163,9 @@ VALUES (
     'Acompanhamento urgente',
     NOW()
 )
-ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
 
-WITH appt AS (SELECT NOW() + INTERVAL '7 days' AS dt)
+WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = 'DOC321654'),
@@ -175,7 +177,21 @@ VALUES (
     'Caso urgente - prioridade máxima',
     NOW()
 )
-ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
+
+WITH appt AS (SELECT NOW() + INTERVAL '15 days' AS dt)
+INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
+VALUES (
+    (SELECT id FROM patients WHERE document = 'DOC789456'),
+    (SELECT id FROM doctors WHERE crm = 'CRM12345'),
+    (SELECT id FROM nurses WHERE coren = 'COREN67890'),
+    (SELECT dt FROM appt),
+    'AGENDADO',
+    'URGENTE',
+    'Caso urgente - prioridade máxima',
+    NOW()
+)
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
 
 -- Inserir agendamentos concluídos para histórico (protegidos contra duplicação com ON CONFLICT)
 WITH appt AS (SELECT NOW() - INTERVAL '10 days' AS dt)
@@ -190,9 +206,9 @@ VALUES (
     'Consulta realizada com sucesso',
     (SELECT dt FROM appt)
 )
-ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
 
-WITH appt AS (SELECT NOW() - INTERVAL '20 days' AS dt)
+WITH appt AS (SELECT NOW() + INTERVAL '20 days' AS dt)
 INSERT INTO appointments (patient_id, doctor_id, nurse_id, appointment_date, status, criticidade, notes, created_at)
 VALUES (
     (SELECT id FROM patients WHERE document = 'DOC66666'),
@@ -204,7 +220,7 @@ VALUES (
     'Consulta realizada - evolução positiva',
     (SELECT dt FROM appt)
 )
-ON CONFLICT (patient_id, doctor_id, appointment_date) DO NOTHING;
+ON CONFLICT (patient_id, doctor_id, created_at) DO NOTHING;
 
 -- Inserir registros médicos para agendamentos concluídos
 WITH target AS (
