@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -46,9 +47,18 @@ public class NotificationService {
     public Notification processConfirmation(String trackingToken) {
         Notification notification = validateAndGetNotification(trackingToken);
         Appointment appointment = notification.getAppointment();
+        Appointment vagaAberta = null;
+
+        if(Objects.nonNull(appointment.getOfferedSlotAppointmentId())){
+            vagaAberta = appointmentRepository.findById(appointment.getOfferedSlotAppointmentId()).orElseThrow();
+            if(vagaAberta.getStatus() != AppointmentStatus.VAGA_ABERTA){
+                throw new IllegalStateException("Esta vaga já foi realocada para outro paciente. " +
+                        "Você pode entrar na fila de espera para receber novas ofertas.");
+            }
+        }
 
         if (appointment.getStatus() != AppointmentStatus.PENDENTE_CONFIRMACAO &&
-                appointment.getStatus() != AppointmentStatus.REMARCACAO_OFERECIDA) {
+                appointment.getStatus() != AppointmentStatus.REMARCACAO_OFERECIDA && appointment.getStatus() != AppointmentStatus.VAGA_ABERTA) {
             throw new IllegalStateException("Esta vaga já foi realocada para outro paciente. " +
                     "Você pode entrar na fila de espera para receber novas ofertas.");
         }
@@ -58,7 +68,14 @@ public class NotificationService {
         appointment.setStatus(AppointmentStatus.CONFIRMADO);
         appointment.setUpdatedAt(LocalDateTime.now());
 
+
         appointmentRepository.save(appointment);
+
+        if(Objects.nonNull(appointment.getOfferedSlotAppointmentId())){
+            vagaAberta.setStatus(AppointmentStatus.REMARCACAO_CONFIRMADA);
+            appointmentRepository.save(vagaAberta);
+        }
+
         expiresToken(notification);
         return notificationRepository.save(notification);
     }
