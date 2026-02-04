@@ -247,6 +247,8 @@ public class ScheduledNotificationService {
         offered.setNotes("Oferta de antecipação gerada automaticamente. Consulta original do paciente: "
                 + best.getAppointmentDate().format(formatter));
 
+        slot.setStatus(AppointmentStatus.OFERTA_CONCLUIDA);
+
         appointmentRepository.save(offered);
 
         // Cria a notificacao de realocacao e envia email.
@@ -254,7 +256,7 @@ public class ScheduledNotificationService {
 
         try {
             notificationService.createRescheduleNotificationAndSend(offered, expiresAt);
-
+            appointmentRepository.save(slot);
             logger.info("Oferta criada com sucesso: vaga ID {} -> novo appointment ID {} (Paciente '{}'). Expira em {}",
                     slot.getId(),
                     offered.getId(),
