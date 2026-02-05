@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "1129cc23-5f48-4bc6-a3ad-d9644af29412",
+    "_postman_id": "47a69be9-d798-428c-8a51-e1e788d7322b",
     "name": "FilaZero",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "9099310"
+    "_exporter_id": "20727142",
+    "_collection_link": "https://go.postman.co/collection/20727142-47a69be9-d798-428c-8a51-e1e788d7322b?source=collection_link"
   },
   "item": [
     {
@@ -862,7 +863,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Remarcado\"\r\n}",
+              "raw": "{\r\n  \"appointmentDate\": \"2026-02-10T15:00:00\",\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"nurseId\": 1,\r\n  \"status\": \"AGENDADO\",\r\n  \"criticidade\": \"ALTA\",\r\n  \"notes\": \"Remarcado\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -969,7 +970,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"appointmentId\": 1,\r\n  \"diagnosis\": \"Diagnóstico exemplo\",\r\n  \"treatment\": \"Tratamento exemplo\",\r\n  \"notes\": \"Observações\"\r\n}",
+              "raw": "{\r\n  \"appointmentId\": 1,\r\n  \"patientId\": 1,\r\n  \"doctorId\": 1,\r\n  \"diagnosis\": \"Diagnóstico exemplo\",\r\n  \"treatment\": \"Tratamento exemplo\",\r\n  \"notes\": \"Observações\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1043,13 +1044,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/medicalrecords/1",
+              "raw": "{{baseUrl}}/medicalrecords/3",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "medicalrecords",
-                "1"
+                "3"
               ]
             }
           },
