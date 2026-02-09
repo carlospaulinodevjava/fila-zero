@@ -1197,10 +1197,10 @@
       ]
     },
     {
-      "name": "Webhook (Confirmação/Cancelamento)",
+      "name": "Callback (Confirmação/Cancelamento)",
       "item": [
         {
-          "name": "POST /webhook/process-confirmation",
+          "name": "POST /callback/process-confirmation",
           "request": {
             "method": "POST",
             "header": [],
@@ -1215,12 +1215,12 @@
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/webhook/process-confirmation",
+              "raw": "{{baseUrl}}/callback/process-confirmation",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "webhook",
+                "callback",
                 "process-confirmation"
               ]
             }
@@ -1228,7 +1228,7 @@
           "response": []
         },
         {
-          "name": "POST /webhook/process-cancellation",
+          "name": "POST /callback/process-cancellation",
           "request": {
             "method": "POST",
             "header": [],
@@ -1243,12 +1243,12 @@
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/webhook/process-cancellation",
+              "raw": "{{baseUrl}}/callback/process-cancellation",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "webhook",
+                "callback",
                 "process-cancellation"
               ]
             }
