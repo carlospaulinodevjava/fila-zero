@@ -8,12 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/webhook")
-public class WebhookController {
+@RequestMapping("/callback")
+public class CallbackController {
 
     private final NotificationService notificationService;
 
-    public WebhookController(NotificationService notificationService) {
+    public CallbackController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 

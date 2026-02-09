@@ -282,7 +282,7 @@ public class ScheduledNotificationService {
 
         long diasEspera = 0;
         if (appointment.getCreatedAt() != null) {
-            diasEspera = Duration.between(appointment.getCreatedAt(), now).toDays();
+            diasEspera = Duration.between(appointment.getAppointmentDate(), now).toDays();
         }
 
         return (pesoCriticidade * 1000) + (int) (diasEspera * 10);

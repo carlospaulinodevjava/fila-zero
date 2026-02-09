@@ -46,8 +46,8 @@ public class EmailService {
                             .format(formatter)
             );
             context.setVariable("trackingToken", notification.getTrackingToken());
-            context.setVariable("confirmUrl", "http://localhost:8080/webhook/process-confirmation");
-            context.setVariable("cancelUrl", "http://localhost:8080/webhook/process-cancellation");
+            context.setVariable("confirmUrl", "http://localhost:8080/callback/process-confirmation");
+            context.setVariable("cancelUrl", "http://localhost:8080/callback/process-cancellation");
             String html = templateEngine.process("email/email-template", context);
 
 
@@ -116,11 +116,11 @@ public class EmailService {
 
             context.setVariable(
                     "confirmUrl",
-                    "http://localhost:8080/webhook/process-confirmation"
+                    "http://localhost:8080/callback/process-confirmation"
             );
             context.setVariable(
                     "cancelUrl",
-                    "http://localhost:8080/webhook/process-cancellation"
+                    "http://localhost:8080/callback/process-cancellation"
             );
 
             String html = templateEngine.process("email/email-template", context);
