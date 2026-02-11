@@ -48,6 +48,7 @@ public class NotificationService {
         Notification notification = validateAndGetNotification(trackingToken);
         Appointment appointment = notification.getAppointment();
         Appointment vagaAberta = null;
+        Appointment vagaOriginal = null;
 
         if(Objects.nonNull(appointment.getOfferedSlotAppointmentId())){
             vagaAberta = appointmentRepository.findById(appointment.getOfferedSlotAppointmentId()).orElseThrow();
@@ -74,6 +75,12 @@ public class NotificationService {
         if(Objects.nonNull(appointment.getOfferedSlotAppointmentId())){
             vagaAberta.setStatus(AppointmentStatus.REMARCACAO_CONFIRMADA);
             appointmentRepository.save(vagaAberta);
+
+            vagaOriginal = appointmentRepository.findById(appointment.getSourceAppointmentId()).orElseThrow();
+            vagaOriginal.setStatus(AppointmentStatus.REMARCACAO_CONFIRMADA);
+
+            appointmentRepository.save(vagaOriginal);
+
         }
 
         expiresToken(notification);

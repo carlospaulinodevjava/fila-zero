@@ -37,7 +37,7 @@ VALUES ('Dermatologia', 'Especialidade focada em doenças da pele, cabelo e unha
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)
-VALUES ('Ginecologia', 'Especialidade focada na saúde da mulher', 25)
+VALUES ('Ginecologia', 'Especialidade focad\a na saúde da mulher', 25)
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO specialties (name, description, average_wait_time)

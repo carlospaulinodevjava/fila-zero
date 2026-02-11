@@ -58,6 +58,9 @@ public class Appointment {
     @Column(name = "offered_slot_appointment_id")
     private Long offeredSlotAppointmentId;
 
+    @Column(name = "source_appointment_id")
+    private Long sourceAppointmentId;
+
     public Long getId() {
         return id;
     }
@@ -168,5 +171,13 @@ public class Appointment {
 
     public void setOfferedSlotAppointmentId(Long offeredSlotAppointmentId) {
         this.offeredSlotAppointmentId = offeredSlotAppointmentId;
+    }
+
+    public Long getSourceAppointmentId() {
+        return sourceAppointmentId;
+    }
+
+    public void setSourceAppointmentId(Long sourceAppointmentId) {
+        this.sourceAppointmentId = sourceAppointmentId;
     }
 }

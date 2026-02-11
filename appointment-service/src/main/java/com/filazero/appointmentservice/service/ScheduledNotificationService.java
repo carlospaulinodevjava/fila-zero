@@ -2,14 +2,12 @@ package com.filazero.appointmentservice.service;
 
 import com.filazero.appointmentservice.enums.AppointmentStatus;
 import com.filazero.appointmentservice.enums.NotificationStatus;
-import com.filazero.appointmentservice.enums.NotificationType;
 import com.filazero.appointmentservice.persistence.entity.Appointment;
 import com.filazero.appointmentservice.persistence.entity.Notification;
 import com.filazero.appointmentservice.persistence.repository.AppointmentRepository;
 import com.filazero.appointmentservice.persistence.repository.NotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ScheduledNotificationService {
@@ -241,9 +238,12 @@ public class ScheduledNotificationService {
         offered.setAppointmentDate(slot.getAppointmentDate());
         offered.setStatus(AppointmentStatus.REMARCACAO_OFERECIDA);
         offered.setCreatedAt(now);
+        offered.setConfirmationDeadline(now.plusHours(REALOCACAO_EXPIRES_HOURS));
+        offered.setSentAt(LocalDateTime.now());
         offered.setUpdatedAt(now);
         offered.setCriticidade(best.getCriticidade());
         offered.setOfferedSlotAppointmentId(slot.getId());
+        offered.setSourceAppointmentId(best.getId());
         offered.setNotes("Oferta de antecipação gerada automaticamente. Consulta original do paciente: "
                 + best.getAppointmentDate().format(formatter));
 

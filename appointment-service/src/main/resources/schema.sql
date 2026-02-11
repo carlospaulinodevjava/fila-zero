@@ -68,7 +68,9 @@ CREATE TABLE IF NOT EXISTS appointments (
     sent_at TIMESTAMP DEFAULT NULL,
     confirmation_deadline TIMESTAMP DEFAULT NULL,
     offered_slot_appointment_id BIGINT NULL,
+    source_appointment_id BIGINT NULL,
     FOREIGN KEY (offered_slot_appointment_id) REFERENCES appointments (id),
+    FOREIGN KEY (source_appointment_id) REFERENCES appointments (id),
     FOREIGN KEY (patient_id) REFERENCES patients (id),
     FOREIGN KEY (doctor_id) REFERENCES doctors (id),
     FOREIGN KEY (nurse_id) REFERENCES nurses (id)
