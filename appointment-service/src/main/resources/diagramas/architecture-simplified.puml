@@ -1,0 +1,93 @@
+@startuml architecture-simplified
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontSize 10
+
+title Fila Zero - Diagrama de Arquitetura
+
+' =======================
+' TOPO: AMBIENTE DE DESENVOLVIMENTO E DEVOPS
+' =======================
+package "Ambiente de Desenvolvimento" {
+  rectangle "Git" as git_dev #D3D3D3
+  rectangle "Maven" as maven_dev #90EE90
+}
+
+rectangle "IntelliJ IDEA" as ide #FFB84D
+
+package "DevOps Stack" {
+  rectangle "Docker" as docker_dev #ADD8E6
+  rectangle "Maven" as maven_ops #90EE90
+  rectangle "Git" as git_ops #D3D3D3
+}
+
+git_dev -down-> ide
+maven_dev -down-> ide
+
+' =======================
+' CENTRO: APLICAÇÃO
+' =======================
+package "Aplicação" {
+
+  node "Container Docker" as docker_container #B0E0E6 {
+
+    node "Spring Boot Application" as spring_app #98FB98 {
+
+      rectangle "Controllers" as controllers #FFFFFF
+
+      rectangle "Security" as security #FFE4E1 {
+        [JWT Authentication\nSpring Security]
+      }
+
+      rectangle "Services" as services #FFFFFF
+
+      rectangle "Repositories" as repositories #FFFFFF
+
+      controllers -down-> services
+      services -down-> repositories
+
+      security -right-> controllers
+    }
+
+    database "PostgreSQL" as postgres #E0FFFF
+
+    repositories -down-> postgres
+  }
+}
+
+ide ..down..> docker_container
+
+' =======================
+' DIREITA: BACKEND STACK
+' =======================
+package "Backend Stack" {
+  rectangle "Java 21" as java #FFB84D
+  rectangle "Spring Boot 3.x" as springboot #90EE90
+  rectangle "JWT" as jwt #FFD700
+
+  rectangle "Spring Security" as spring_sec #90EE90
+  rectangle "Spring Data JPA" as spring_jpa #90EE90
+}
+
+' =======================
+' NOTAS LATERAIS
+' =======================
+note right of docker_container
+  Containerização da aplicação
+  e banco de dados
+end note
+
+note right of security
+  REST API
+  com autenticação JWT
+end note
+
+' =======================
+' CONEXÕES
+' =======================
+spring_app ..> java : ""
+spring_app ..> springboot : ""
+spring_app ..> jwt : ""
+
+@enduml
+

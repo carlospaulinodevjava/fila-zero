@@ -1,0 +1,194 @@
+@startuml architecture-overview
+!define RECTANGLE class
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam defaultFontSize 12
+
+title Arquitetura - Appointment Service\nVisão Estrutural e Stacks
+
+' =======================
+' CAMADA DE CLIENTE
+' =======================
+package "Cliente / Frontend" #LightGray {
+  [Aplicações Web] as webapp
+  [Aplicações Mobile] as mobile
+  [APIs Externas] as external_client
+}
+
+' =======================
+' CAMADA DE APRESENTAÇÃO (Controller)
+' =======================
+package "Presentation Layer\n(Controllers - MVC)" #LightBlue {
+  rectangle "REST Controllers" as controllers {
+    [Appointment API]
+    [Authentication API]
+    [Doctor API]
+    [Patient API]
+    [Nurse API]
+    [Notification API]
+    [Medical Record API]
+  }
+
+  rectangle "Cross-Cutting\nSecurity" as security_layer #Orange {
+    [Spring Security Filter Chain]
+    [JWT Authentication]
+    [Authorization]
+  }
+}
+
+' =======================
+' CAMADA DE NEGÓCIO (Service)
+' =======================
+package "Business Layer\n(Services - MVC)" #LightGreen {
+  rectangle "Core Services" as core_services {
+    [Appointment Service]
+    [Doctor Service]
+    [Patient Service]
+    [User Service]
+    [Notification Service]
+    [Email Service]
+  }
+
+  rectangle "Business Logic" as business_logic #PaleGreen {
+    [Validators]
+    [Business Rules]
+    [Mappers (DTO ↔ Entity)]
+  }
+
+  rectangle "Background Jobs" as jobs #LightYellow {
+    [Scheduled Tasks]
+    [Notification Scheduler]
+  }
+}
+
+' =======================
+' CAMADA DE PERSISTÊNCIA (Repository)
+' =======================
+package "Persistence Layer\n(Repositories - MVC)" #Wheat {
+  rectangle "Data Access" as repositories {
+    [Spring Data JPA\nRepositories]
+    [JPA Entities]
+    [Query Methods]
+  }
+}
+
+' =======================
+' CAMADA DE INFRAESTRUTURA
+' =======================
+package "Infrastructure & Integration" #Lavender {
+  rectangle "Database" as db_layer {
+    database "PostgreSQL" as postgres #LightCyan
+  }
+
+  rectangle "External Services" as ext_services {
+    [SMTP Server\n(Email)]
+    [Template Engine\n(Thymeleaf)]
+    [External APIs\n(Webhooks)]
+  }
+}
+
+' =======================
+' DEVOPS & RUNTIME
+' =======================
+package "DevOps & Runtime" #WhiteSmoke {
+  rectangle "Build Tools" as build {
+    [Maven]
+    [Git]
+  }
+
+  rectangle "Containerization" as runtime {
+    [Docker]
+    [Docker Compose]
+  }
+}
+
+' =======================
+' RELAÇÕES (MVC FLOW)
+' =======================
+webapp --> controllers : HTTP/REST
+mobile --> controllers : HTTP/REST
+external_client --> controllers : HTTP/REST
+
+controllers --> security_layer : ⊗ passa por
+security_layer --> controllers : ✓ autoriza
+
+controllers --> core_services : delega
+controllers --> business_logic : usa mappers
+
+core_services --> business_logic : valida
+core_services --> repositories : CRUD operations
+
+repositories --> postgres : JPA/Hibernate
+
+core_services --> ext_services : integra
+jobs --> core_services : executa tarefas
+
+build --> runtime : constrói imagem
+runtime --> controllers : hospeda aplicação
+
+' =======================
+' STACK TECNOLÓGICA
+' =======================
+note right of controllers
+  <b>Stacks Principais</b>
+  ━━━━━━━━━━━━━━━━━━
+  <b>Backend Framework:</b>
+  • Spring Boot 3.x
+  • Spring MVC
+  • Spring Security
+
+  <b>Persistência:</b>
+  • Spring Data JPA
+  • Hibernate ORM
+  • PostgreSQL
+
+  <b>Segurança:</b>
+  • JWT (JSON Web Token)
+  • BCrypt Password Encoding
+
+  <b>Build & Deploy:</b>
+  • Java 21
+  • Maven
+  • Docker
+end note
+
+' =======================
+' PADRÕES ARQUITETURAIS
+' =======================
+note bottom of core_services
+  <b>Padrões & Metodologias</b>
+  ━━━━━━━━━━━━━━━━━━━━━━━
+  • <b>MVC</b> (Model-View-Controller)
+  • <b>Layered Architecture</b>
+  • <b>Repository Pattern</b>
+  • <b>DTO Pattern</b>
+  • <b>Dependency Injection</b>
+  • <b>RESTful API Design</b>
+  • <b>JWT Authentication</b>
+  • <b>Scheduled Tasks</b>
+end note
+
+' =======================
+' FLUXO DE DADOS
+' =======================
+legend right
+  <b>Fluxo de Requisição (MVC)</b>
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. Cliente → REST Controller
+  2. Security Filter → Autenticação/Autorização
+  3. Controller → Service (Business Logic)
+  4. Service → Validator/Mapper
+  5. Service → Repository
+  6. Repository → Database (JPA/Hibernate)
+  7. Database → Response (reverso)
+
+  <b>Cross-Cutting Concerns:</b>
+  • Security (JWT) em todas requisições
+  • Exception Handling global
+  • Logging & Monitoring
+end legend
+
+@enduml
+

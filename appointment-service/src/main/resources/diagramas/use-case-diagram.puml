@@ -1,0 +1,79 @@
+@startuml use-case-diagram
+left to right direction
+skinparam packageStyle rectangle
+
+title Appointment Service - Diagrama de Casos de Uso Integrado
+
+actor "Paciente" as patient
+actor "Sistema Externo" as external
+actor "Profissional de Saúde\n(Médico/Enfermeiro)" as health_professional
+actor "Administrador" as admin
+
+rectangle "Appointment Service" {
+  usecase "Agendar Consulta" as UC1
+  usecase "Cancelar Consulta" as UC2
+  usecase "Visualizar Consultas" as UC3
+  usecase "<<API Auth>>\nAutenticar Usuário" as UC4
+  usecase "Gerenciar Pacientes" as UC5
+  usecase "Gerenciar Prontuário" as UC6
+  usecase "Gerenciar Enfermeiros" as UC7
+  usecase "Gerenciar Médicos" as UC8
+  usecase "<<Scheduled Batch>>\nEnviar Notificações\npor E-mail" as UC9
+  usecase "Processar Confirmação\nvia E-mail (Callback)" as UC10
+  usecase "Processar Cancelamento\nvia E-mail (Callback)" as UC11
+  usecase "Executar Batch de\nExpiração" as UC12
+  usecase "Executar Batch de\nRealocação" as UC13
+}
+
+' Relacionamentos Paciente
+patient --> UC1
+patient --> UC2
+patient --> UC3
+patient --> UC10 : clica no link do e-mail
+patient --> UC11 : clica no link do e-mail
+
+' Relacionamentos Sistema Externo
+external --> UC4
+external --> UC9 : trigger batch
+external --> UC12 : trigger batch
+external --> UC13 : trigger batch
+
+' Relacionamentos Profissional de Saúde
+health_professional --> UC1
+health_professional --> UC2
+health_professional --> UC3
+health_professional --> UC4
+health_professional --> UC5
+health_professional --> UC6
+
+' Relacionamentos Administrador
+admin --> UC5
+admin --> UC6
+admin --> UC7
+admin --> UC8
+
+' Fluxo de notificações
+UC1 ..> UC9 : <<scheduled>>
+UC9 ..> patient : envia e-mail
+
+' Nota explicativa
+note right of UC9
+  Batch agendado (cron) envia
+  e-mails de confirmação via SMTP
+  (5 dias antes da consulta)
+end note
+
+note bottom of UC10
+  Paciente confirma consulta
+  clicando no link enviado
+  por e-mail (token tracking)
+end note
+
+note bottom of UC12
+  Batch processa consultas
+  não confirmadas e abre
+  vagas para realocação
+end note
+
+@enduml
+

@@ -1,0 +1,129 @@
+' Diagrama gerado: architecture.puml
+' Objetivo: mostrar stacks e arquitetura MVC/arquitetural do projeto appointment-service
+
+@startuml
+skinparam handwritten false
+skinparam componentStyle rectangle
+
+title Arquitetura - appointment-service (MVC & Stacks)
+
+' DevOps / Build / Runtime
+package "DevOps / Build" as devops {
+  [Git] as git #LightGray
+  [Maven] as maven #LightGreen
+  [Docker] as docker #LightBlue
+}
+
+' Runtime: Container + App
+node "Container Docker" as container #LightBlue {
+  node "Aplicação Spring Boot" as app #PaleGreen {
+
+    package "Camada de Apresentação (MVC)" as mvc {
+      component "Controladores (Controllers)" as controllers #White
+      component "DTOs / Request/Response" as dtos #Lavender
+      component "Mappers (MapStruct / Mapper classes)" as mappers #Lavender
+    }
+
+    package "Camada de Negócio" as business {
+      component "Serviços (Services)" as services #White
+      component "Validação / Regras de Negócio" as validation #Wheat
+      component "Agendador (Scheduler)" as scheduler #LightYellow
+    }
+
+    package "Camada de Persistência" as persistence {
+      component "Repositórios (Spring Data JPA)" as repos #White
+      component "Entities (JPA Entities)" as entities #Moccasin
+      database "PostgreSQL (DB)" as localdb #LightCyan
+    }
+
+    package "Infra / Integrations" as integrations {
+      component "Serviço de Email (SMTP)" as smtp #White
+      component "Templates (Thymeleaf)" as thymeleaf #Lavender
+      component "Webhooks / External APIs" as external #White
+    }
+
+    package "Segurança / Cross-cutting" as security {
+      component "Spring Security" as springsec #LightGreen
+      component "JWT (JwtUtil, JwtAuthFilter)" as jwt #Gold
+      component "Authentication Provider / Authorization" as authprov #Orange
+    }
+
+    package "Testes / Quality" as tests {
+      component "Unit Tests / Integration Tests" as ttests #LightSteelBlue
+    }
+
+  }
+}
+
+' Relações foco MVC
+controllers --> dtos : usa / recebe
+controllers --> mappers : converte DTO <-> Entity
+controllers --> services : chama endpoints
+services --> repos : usa (CRUD / Queries)
+repos --> entities : persiste
+entities --> localdb : mapeia (JPA)
+
+' Segurança transversal
+controllers ..> springsec : interceptor
+controllers ..> jwt : valida token
+services ..> authprov : autorização
+springsec ..> jwt : usa
+
+' Integrações
+services --> smtp : envia emails (EmailService)
+services --> thymeleaf : renderiza templates
+services --> external : chama APIs externas
+scheduler --> services : dispara jobs agendados
+
+' DevOps / Build flows
+git --> maven : triggers/CI
+maven --> docker : empacota (jar) -> imagem
+docker --> container : deploy
+container --> app : executa
+
+' Stacks / Tech note
+note right of devops
+  Stacks principais:
+  - Java 21
+  - Spring Boot 3.x
+  - Spring Security (JWT)
+  - Spring Data JPA (Hibernate)
+  - Thymeleaf (email templates)
+  - PostgreSQL
+  - Docker, Maven
+end note
+
+' Exemplos de componentes detectados no código
+note left of controllers
+  Exemplos:
+  - AppointmentController
+  - AuthController
+  - DoctorController
+  - NotificationController
+end note
+
+note left of services
+  Exemplos:
+  - AppointmentService
+  - EmailService
+  - NotificationService
+  - ScheduledNotificationService
+end note
+
+note left of repos
+  Exemplos:
+  - AppointmentRepository
+  - DoctorRepository
+  - PatientRepository
+  - NotificationRepository
+end note
+
+' Observações arquiteturais
+note bottom
+  - MVC: separação clara entre apresentação, negócio e persistência.
+  - Cross-cutting: segurança (JWT) e logging/metrics podem atuar transversalmente.
+  - Arquitetura adequada para containerização e CI/CD.
+end note
+
+@enduml
+
